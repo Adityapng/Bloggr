@@ -1,0 +1,152 @@
+# Blog Application API Endpoints
+
+This document lists all the RESTful API endpoints for the blog application.
+
+---
+## 1. Authentication Endpoints
+---
+Handles user registration, login, and session management.
+
+- POST   /api/auth/register
+  Description: Create a new user account.
+  Auth: Public
+
+- POST   /api/auth/login
+  Description: Log in an existing user and receive a JWT.
+  Auth: Public
+
+- POST   /api/auth/logout
+  Description: Log out the currently authenticated user.
+  Auth: Required
+
+- GET    /api/auth/me
+  Description: Get the profile data of the currently logged-in user.
+  Auth: Required
+
+- POST   /api/auth/refresh-token
+  Description: Obtain a new access token using a refresh token.
+  Auth: Required (via Refresh Token)
+
+
+---
+## 2. User & Author Endpoints
+---
+Handles public user profiles and management of the authenticated user's account.
+
+- GET    /api/users
+  Description: Get a list of all public user profiles (authors).
+  Auth: Public
+
+- GET    /api/users/:userId
+  Description: Get the public profile of a specific user.
+  Auth: Public
+
+- GET    /api/users/:userId/posts
+  Description: Get all blog posts published by a specific user.
+  Auth: Public
+
+- PUT    /api/users/me
+  Description: Update the profile information of the currently authenticated user.
+  Auth: Required
+
+
+---
+## 3. Blog Post Endpoints
+---
+The core resource for creating, reading, and managing blog posts.
+
+- GET    /api/posts
+  Description: Get a list of all posts. Supports filtering and pagination.
+  Query Params: ?page=1&limit=10&category=tech&tag=node&sort=latest
+  Auth: Public
+
+- POST   /api/posts
+  Description: Create a new blog post.
+  Auth: Required
+
+- GET    /api/posts/:postId
+  Description: Get a single blog post by its ID or slug.
+  Auth: Public
+
+- PUT    /api/posts/:postId
+  Description: Fully update an existing post. Must be the post author.
+  Auth: Required (Author)
+
+- PATCH  /api/posts/:postId
+  Description: Partially update an existing post. Must be the post author.
+  Auth: Required (Author)
+
+- DELETE /api/posts/:postId
+  Description: Delete a post. Must be the post author.
+  Auth: Required (Author)
+
+
+---
+## 4. Comment Endpoints
+---
+Comments are nested under the post they belong to.
+
+- GET    /api/posts/:postId/comments
+  Description: Get all comments for a specific post.
+  Auth: Public
+
+- POST   /api/posts/:postId/comments
+  Description: Add a new comment to a specific post.
+  Auth: Required
+
+- PUT    /api/posts/:postId/comments/:commentId
+  Description: Update a comment. Must be the comment author.
+  Auth: Required (Author)
+
+- DELETE /api/posts/:postId/comments/:commentId
+  Description: Delete a comment. Must be comment author or post author.
+  Auth: Required (Author)
+
+
+---
+## 5. Category & Tag Endpoints
+---
+Manages the taxonomies for organizing posts.
+
+- GET    /api/categories
+  Description: Get a list of all available categories.
+  Auth: Public
+
+- GET    /api/tags
+  Description: Get a list of all available tags.
+  Auth: Public
+
+- GET    /api/categories/:categoryId/posts
+  Description: Get all posts belonging to a specific category.
+  Auth: Public
+
+- POST   /api/categories
+  Description: Create a new category.
+  Auth: Required (Admin)
+
+- DELETE /api/categories/:categoryId
+  Description: Delete a category.
+  Auth: Required (Admin)
+
+
+---
+## 6. Interaction & Utility Endpoints
+---
+Additional features for user interaction and application utilities.
+
+- POST   /api/posts/:postId/like
+  Description: Like a post.
+  Auth: Required
+
+- DELETE /api/posts/:postId/like
+  Description: Unlike a post.
+  Auth: Required
+
+- GET    /api/search
+  Description: Search for posts by a query term.
+  Query Params: ?q=your-search-term
+  Auth: Public
+
+- POST   /api/uploads/image
+  Description: Upload an image to be used in a post. Returns the image URL.
+  Auth: Required
