@@ -1,8 +1,7 @@
 "use client";
 
-import type React from "react";
-
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,9 +15,8 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, User, Mail, Lock, UserCheck } from "lucide-react";
-import { log } from "console";
-import { json } from "stream/consumers";
 
+// --- Type Definitions ---
 interface FormData {
   firstName: string;
   lastName: string;
@@ -33,10 +31,12 @@ interface FormErrors {
   email?: string;
   username?: string;
   password?: string;
-  general?: string;
+  general?: string; // For server-side errors
 }
 
+// --- The Component ---
 export default function SignupForm() {
+  const router = useRouter(); // Initialize the router
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -48,50 +48,41 @@ export default function SignupForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
+  // --- Validation (Your logic was great, no changes needed) ---
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!formData.firstName.trim()) {
+    if (!formData.firstName.trim())
       newErrors.firstName = "First name is required";
-    } else if (formData.firstName.trim().length < 2) {
+    else if (formData.firstName.trim().length < 2)
       newErrors.firstName = "First name must be at least 2 characters";
-    }
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    } else if (formData.lastName.trim().length < 2) {
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+    else if (formData.lastName.trim().length < 2)
       newErrors.lastName = "Last name must be at least 2 characters";
-    }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!emailRegex.test(formData.email)) {
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    else if (!emailRegex.test(formData.email))
       newErrors.email = "Please enter a valid email address";
-    }
 
     const usernameRegex = /^[a-zA-Z0-9_]+$/;
-    if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
-    } else if (formData.username.length < 3) {
+    if (!formData.username.trim()) newErrors.username = "Username is required";
+    else if (formData.username.length < 3)
       newErrors.username = "Username must be at least 3 characters";
-    } else if (formData.username.length > 20) {
+    else if (formData.username.length > 20)
       newErrors.username = "Username must be less than 20 characters";
-    } else if (!usernameRegex.test(formData.username)) {
+    else if (!usernameRegex.test(formData.username))
       newErrors.username =
         "Username can only contain letters, numbers, and underscores";
-    }
 
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
+    if (!formData.password) newErrors.password = "Password is required";
+    else if (formData.password.length < 8)
       newErrors.password = "Password must be at least 8 characters";
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+    else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password))
       newErrors.password =
         "Password must contain at least one uppercase letter, one lowercase letter, and one number";
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -102,124 +93,58 @@ export default function SignupForm() {
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
-  };
-  const handleResetForm = () => {
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      username: "",
-      password: "",
-    });
-    setErrors({});
-    setIsLoading(false);
-    setShowPassword(false);
-    setIsSuccess(false);
+    if (errors.general) {
+      setErrors((prev) => ({ ...prev, general: undefined }));
+    }
   };
 
+  // --- Form Submission ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsLoading(true);
     setErrors({});
 
-    const getApiUrl = () => {
-
-      // In development, detect if we're on network or localhost
-      if (typeof window !== "undefined") {
-        const hostname = window.location.hostname;
-
-        // If accessing via network IP, use the same IP for API
-        if (
-          hostname.startsWith("192.168.1.") ||
-          hostname.startsWith("192.168.2.") ||
-          hostname.startsWith("10.") ||
-          hostname.startsWith("172.16.") ||
-          hostname.startsWith("10.206.")
-        ) {
-          return `http://${hostname}:5050`;
-        }
-      }
-
-      // Default to localhost for local development
-      return "http://localhost:5050";
-    };
-
-    
     try {
-      const apiURL = getApiUrl();
-      const response = await fetch(`${apiURL}/api/users/signup`, {
+      // Use environment variable for the API URL. It's safer and more standard.
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050";
+
+      const response = await fetch(`${apiUrl}/api/auth/signup`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setIsSuccess(true);
+        // Success! Redirect the user to the home page.
+        router.push("/");
+        router.refresh();
       } else {
-        if (response.status === 400 && (data.error === 'Email already exists' || data.error === 'A user already exists with this username')) {
-          setErrors({general: data.error});
-        } else {
-          alert('last')
-          alert(JSON.stringify(data))
-          setErrors({
-            general:data.message || "Failed to create account. Please try again."
-          });
-          console.log(response)
-          console.log(data.error)
-        }
+        // Handle server-side errors (e.g., email already exists)
+        setErrors({
+          general: data.error || "Failed to create account. Please try again.",
+        });
       }
-    } catch (error: Error | any) {
-      // alert("catch block ececuted");
-      setErrors({ general: "Something went wrong. Please try again." });
-      
+    } catch (error) {
+      setErrors({
+        general: "Something went wrong. Could not connect to the server.",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (isSuccess) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-                <UserCheck className="w-8 h-8 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-green-600 dark:text-green-400">
-                  Welcome aboard!
-                </h2>
-                <p className="text-muted-foreground mt-2">
-                  Your account has been created successfully. You can now start
-                  using our platform.
-                </p>
-              </div>
-              <Button onClick={() => {setIsSuccess(false); handleResetForm()}} className="w-full">
-                Create Another Account
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
+  // --- JSX (No changes needed here, it was well-structured) ---
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f0f8ff] dark:bg-gray-900 p-4">
+    <div className="min-h-[90dvh] flex items-center justify-center  p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Create an account
+            Welcome to Bloggr
           </CardTitle>
           <CardDescription className="text-center">
             Enter your information below to create your account
@@ -232,7 +157,6 @@ export default function SignupForm() {
                 <AlertDescription>{errors.general}</AlertDescription>
               </Alert>
             )}
-
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First name</Label>
@@ -255,7 +179,6 @@ export default function SignupForm() {
                   <p className="text-sm text-destructive">{errors.firstName}</p>
                 )}
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last name</Label>
                 <div className="relative">
@@ -278,7 +201,6 @@ export default function SignupForm() {
                 )}
               </div>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -299,7 +221,6 @@ export default function SignupForm() {
                 <p className="text-sm text-destructive">{errors.email}</p>
               )}
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <div className="relative">
@@ -324,7 +245,6 @@ export default function SignupForm() {
                 3-20 characters, letters, numbers, and underscores only
               </p>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -364,17 +284,19 @@ export default function SignupForm() {
                 At least 8 characters with uppercase, lowercase, and number
               </p>
             </div>
-
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating account..." : "Create account"}
             </Button>
           </form>
-
           <div className="mt-6">
             <Separator />
             <p className="text-center text-sm text-muted-foreground mt-4">
               Already have an account?{" "}
-              <Button variant="link" className="p-0 h-auto font-normal">
+              <Button
+                variant="link"
+                className="p-0 h-auto font-normal"
+                onClick={() => router.push("/auth/signin/")}
+              >
                 Sign in
               </Button>
             </p>
