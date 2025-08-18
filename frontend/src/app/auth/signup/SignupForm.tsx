@@ -129,7 +129,7 @@ export default function SignupForm() {
           general: data.error || "Failed to create account. Please try again.",
         });
       }
-    } catch (error) {
+    } catch {
       setErrors({
         general: "Something went wrong. Could not connect to the server.",
       });

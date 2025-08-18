@@ -34,7 +34,12 @@ export default async function Page({ params }: { params: { slug: string } }) {
     <div>
       <p>{postData.title}</p>
       <br />
-      <img src={postData.coverImage} />
+      <Image
+        src={postData.coverImage}
+        width={800}
+        height={400}
+        alt={postData.title}
+      />
       <br />
       <p>{postData.content}</p>
     </div>

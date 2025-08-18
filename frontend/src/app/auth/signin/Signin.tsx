@@ -88,7 +88,7 @@ export default function SigninForm() {
       } else {
         setErrors({ general: data.error || "An unknown error occurred." });
       }
-    } catch (error) {
+    } catch {
       setErrors({
         general: "Could not connect to the server. Please try again later.",
       });
@@ -164,7 +164,7 @@ export default function SigninForm() {
         <div className="mt-6">
           <Separator />
           <p className="text-center text-sm text-muted-foreground mt-4">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Button
               variant="link"
               className="p-0 h-auto font-normal"
