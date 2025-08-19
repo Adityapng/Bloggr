@@ -8,8 +8,13 @@ type Blog = {
   commentCount: number;
   likeCount: number;
 };
+interface PageProps {
+  params: { [key: string]: string };
+}
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export const dynamic = "force-dynamic";
+
+export default async function Page({ params }: PageProps) {
   const { slug } = params;
 
   const apiUrl = process.env.NEXT_PUBLIC_SERVER_URL;

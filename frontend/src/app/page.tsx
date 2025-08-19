@@ -14,6 +14,8 @@ import {
 import { BookmarkPlus, MessageCircle, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 type FeedPost = {
   _id: string;
   title: string;

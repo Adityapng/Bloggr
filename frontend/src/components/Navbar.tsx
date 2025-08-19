@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import Image from "next/image";
 import AuthButtons from "../components/Authbuttons";
 import LogoutButton from "../components/LogoutButton";
@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Input } from "./ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "./ui/button";
-import { ModeToggle } from "./DarkLightModeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { GoToCreatePost, GoToProfile, GoToSettings } from "./navButtons";
-import { SquarePen } from "lucide-react";
+import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
 
 interface User {
   username: string;
@@ -47,7 +46,7 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
     return (
       <>
         <GoToCreatePost />
-        <ModeToggle />
+        <ThemeToggle />
 
         <DropdownMenu>
           <DropdownMenuTrigger>
@@ -100,7 +99,7 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
     return (
       <>
         <AuthButtons />
-        <ModeToggle />
+        <ThemeToggle />
       </>
     );
   };

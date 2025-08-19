@@ -1,5 +1,7 @@
 import { cookies } from "next/headers";
 
+export const dynamic = "force-dynamic";
+
 interface userData {
   username: string;
   email: string;
@@ -18,7 +20,7 @@ interface ApiResponse {
 
 export async function getHomePageData(): Promise<ApiResponse | null> {
   try {
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     const token = cookieStore.get("token")?.value;
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050";
