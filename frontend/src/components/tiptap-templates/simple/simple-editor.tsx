@@ -68,10 +68,11 @@ import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
 
 // --- Lib ---
-import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
+import { MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
+import { handleImageUpload } from "@/lib/cloudinaryUpload";
 
 interface SimpleEditorProps {
   // A callback function to pass the content up to the parent
@@ -234,12 +235,14 @@ export function SimpleEditor({ onUpdate, initialContent }: SimpleEditorProps) {
         maxSize: MAX_FILE_SIZE,
         limit: 3,
         upload: handleImageUpload,
-        onError: (error) => console.error("Upload failed:", error),
+        onError: (error) => {
+          console.error("Upload failed:", error.message);
+          alert(`Upload failed: ${error.message}`);
+        },
       }),
     ],
     content: initialContent ? JSON.parse(initialContent) : undefined,
     onUpdate: ({ editor }) => {
-      // We get the content as JSON, stringify it, and call the prop function.
       const contentAsJsonString = JSON.stringify(editor.getJSON());
       onUpdate(contentAsJsonString);
     },

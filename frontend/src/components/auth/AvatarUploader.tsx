@@ -22,7 +22,7 @@ export default function AvatarUploader({
     // --- Step 1: Go to our backend (the manager) to get the permission slip ---
     const getSignature = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/uploads/signature`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/uploads/signature`,
         {
           credentials: "include",
         }
@@ -39,7 +39,7 @@ export default function AvatarUploader({
     formData.append("timestamp", timestamp);
 
     // --- Step 3: Go directly to Cloudinary (the bouncer) and upload the file ---
-    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`;
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/profileAvatar/`;
     const response = await fetch(cloudinaryUrl, {
       method: "POST",
       body: formData,

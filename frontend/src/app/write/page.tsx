@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { Button } from "@/components/ui/button";
@@ -144,11 +144,9 @@ export default function WritePage() {
     "Productivity Hacks",
   ];
 
-  useEffect(() => {
-    // This code will run AFTER the component has re-rendered with the new state.
-    // Therefore, it will always log the most up-to-date value.
-    console.log("State has been updated. New tags:", selectedTags);
-  }, [selectedTags]);
+  // useEffect(() => {
+  //   console.log("State has been updated. New tags:", selectedTags);
+  // }, [selectedTags]);
 
   const handleAddTag = (tagToAdd: string) => {
     if (!selectedTags.includes(tagToAdd)) {
@@ -216,10 +214,12 @@ export default function WritePage() {
     }
   };
 
+  //TODO Add upload draft and publish logic
   const handleSaveDraftClick = (e: React.MouseEvent) => {
     e.preventDefault();
     // handleCreatePost("draft");
-    console.log(content.toString());
+    // console.log(content);
+    console.log(content);
   };
 
   const handlePublishClick = (e: React.MouseEvent) => {

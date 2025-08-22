@@ -38,7 +38,7 @@ export default function HomePage() {
     const fetchPosts = async () => {
       setIsLoading(true);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
         const finalURL = `${apiUrl}/api/posts?page=${currentPage}&tag=${testFilter}`;
 
         console.log("FRONTEND: Attempting to fetch from URL:", finalURL);

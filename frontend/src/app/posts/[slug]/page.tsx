@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 export default async function Page({ params }: PageProps) {
   const { slug } = params;
 
-  const apiUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const finalURL = `${apiUrl}/api/posts/${slug}`;
 
   const response = await fetch(finalURL);
