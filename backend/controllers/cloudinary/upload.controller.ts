@@ -4,9 +4,11 @@ import { v2 as cloudinary } from "cloudinary";
 export const getUploadSignature = (req: Request, res: Response) => {
   try {
     const timestamp = Math.round(new Date().getTime() / 1000);
+    // const folder = "blog_post_images";
 
     const signature = cloudinary.utils.api_sign_request(
       {
+        folder: "blog_post_images",
         timestamp: timestamp,
       },
       process.env.CLOUDINARY_API_SECRET as string
