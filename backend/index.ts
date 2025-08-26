@@ -5,7 +5,6 @@ dotenv.config({ path: "./.env" });
 import connectDB from "./config/connection";
 import cookieParser from "cookie-parser";
 import decodeUserIfPresent from "./middleware/decodeIfUserExist";
-import authenticateUserToken from "./middleware/authenticateUserToken";
 import apiRoutes from "./routes/api.routes";
 import homeRoutes from "./routes/home.routes";
 import configureCloudinary from "./config/cloudinary";
@@ -29,8 +28,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(express.json({ limit: "16kb" }));
+app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
+// app.use(decodeUserIfPresent);
 
 // app.get("/test-route", (req, res) => {
 //   res.status(200).json({ message: "Test route is working!" });

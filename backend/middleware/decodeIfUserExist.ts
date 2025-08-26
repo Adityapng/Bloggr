@@ -1,4 +1,3 @@
-import { log } from "console";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
@@ -25,7 +24,6 @@ const decodeUserIfPresent = (
     const secret = process.env.JWT_SECRET as string;
     const decoded = jwt.verify(token, secret) as any;
     req.user = decoded;
-    console.log(req.cookies.token);
 
     next();
   } catch (error) {

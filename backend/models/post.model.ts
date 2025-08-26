@@ -10,7 +10,9 @@ export interface IPost extends Document {
   likes: Types.ObjectId[];
   bookmarks: Types.ObjectId[];
   commenter: Types.ObjectId[];
-  reads: Types.ObjectId[];
+  reads: number;
+  registeredReader: Types.ObjectId[];
+  registeredReadersCount: number;
   likeCount: number;
   bookmarkCount: number;
   commentCount: number;
@@ -63,16 +65,20 @@ const postSchema = new Schema<IPost>(
         ref: "User",
       },
     ],
-    // reads: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "User",
-    //   },
-    // ],
-    commentCount: {
+    reads: {
       type: Number,
-      default: 0,
     },
+    registeredReader: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    // commentCount: {
+    //   type: Number,
+    //   default: 0,
+    // },
     tags: {
       type: [String],
       default: [],
@@ -81,10 +87,6 @@ const postSchema = new Schema<IPost>(
     status: {
       type: String,
       enum: ["draft", "published"],
-    },
-    readingTime: {
-      type: Number,
-      default: 0,
     },
   },
   {
@@ -119,8 +121,18 @@ postSchema.virtual("bookmarkCount").get(function () {
   return this.bookmarks.length;
 });
 
+postSchema.virtual("registeredUserReadCount").get(function () {
+  return this.registeredReader.length;
+});
+
 postSchema.set("toJSON", { virtuals: true });
 postSchema.set("toObject", { virtuals: true });
+
+postSchema.index({ createdAt: -1 });
+
+postSchema.index({ tags: 1 });
+
+postSchema.index({ author: 1 });
 
 const Post = model<IPost>("Post", postSchema);
 
