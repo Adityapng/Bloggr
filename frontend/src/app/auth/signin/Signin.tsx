@@ -63,7 +63,8 @@ export default function SigninForm() {
     setIsLoading(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      // || "http://localhost:5050";
 
       const isEmail = formData.loginId.includes("@");
       const body = {

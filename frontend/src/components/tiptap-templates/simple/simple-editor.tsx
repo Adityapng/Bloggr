@@ -72,13 +72,18 @@ import { MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
-import { handleImageUpload } from "@/lib/cloudinaryUpload";
+import {
+  CloudinaryUploadResult,
+  handleImageUpload,
+} from "@/lib/cloudinaryUpload";
 
 interface SimpleEditorProps {
   // A callback function to pass the content up to the parent
   onUpdate: (content: string) => void;
   // The initial content to load, useful for editing
   initialContent?: string;
+
+  onImageUpload?: (imageData: CloudinaryUploadResult) => void;
 }
 
 const MainToolbarContent = ({
@@ -189,7 +194,11 @@ const MobileToolbarContent = ({
   </>
 );
 
-export function SimpleEditor({ onUpdate, initialContent }: SimpleEditorProps) {
+export function SimpleEditor({
+  onUpdate,
+  initialContent,
+  onImageUpload,
+}: SimpleEditorProps) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
@@ -234,7 +243,27 @@ export function SimpleEditor({ onUpdate, initialContent }: SimpleEditorProps) {
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
         limit: 3,
-        upload: handleImageUpload,
+        upload: async (file: File) => {
+          try {
+            // 1. Call our central uploader to get the full data
+            const imageData: CloudinaryUploadResult = await handleImageUpload(
+              file
+            );
+
+            // 2. If the parent provided a callback, call it with the full data
+            if (onImageUpload) {
+              onImageUpload(imageData);
+            }
+
+            // 3. Return ONLY the URL to Tiptap
+            return imageData.secure_url;
+          } catch (error: unknown) {
+            console.error("Upload failed in editor:", error);
+            // Propagate the error to Tiptap
+            throw error;
+          }
+        },
+
         onError: (error) => {
           console.error("Upload failed:", error.message);
           alert(`Upload failed: ${error.message}`);

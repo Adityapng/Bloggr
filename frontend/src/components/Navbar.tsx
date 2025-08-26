@@ -50,8 +50,8 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
 
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Avatar className=" size-9">
-              <AvatarImage src="https://github.com/shadcn.png" />
+            <Avatar className=" size-9 ">
+              <AvatarImage className=" select-none" src={user?.avatarURL} />
               <AvatarFallback className=" bg-amber-300 text-sm">
                 {getInitials()}
               </AvatarFallback>
@@ -76,10 +76,7 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
             <DropdownMenuSeparator />
             <DropdownMenuLabel className=" flex w-58 p-2 gap-3">
               <Avatar className=" size-9 ">
-                <AvatarImage
-                  className=" select-none"
-                  src="https://github.com/shadcn.png"
-                />
+                <AvatarImage className=" select-none" src={user?.avatarURL} />
                 <AvatarFallback className=" bg-amber-300 text-sm">
                   {getInitials()}
                 </AvatarFallback>
@@ -130,7 +127,7 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
             </Button>
             <Input
               placeholder="Search"
-              className=" md:w-80 w-40 bg-gray-100 lg:block hidden"
+              className=" md:w-80 w-40 backdrop-blur-xs lg:block hidden"
             />
           </div>
         </div>

@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tags, X } from "lucide-react";
+import { CloudinaryUploadResult } from "@/lib/cloudinaryUpload";
+import { blogTags } from "@/components/Taglist";
 
 export default function WritePage() {
   const router = useRouter();
@@ -17,136 +19,9 @@ export default function WritePage() {
   const [error, setError] = useState<string | null>(null);
   const [tagSearchResult, setTagSearchResult] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  const blogTags: string[] = [
-    "Technology",
-    "Software Development",
-    "Web Development",
-    "Frontend",
-    "Backend",
-    "Full-Stack",
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Next.js",
-    "Node.js",
-    "Python",
-    "API",
-    "Database",
-    "MongoDB",
-    "SQL",
-    "Serverless",
-    "Cloud Computing",
-    "AWS",
-    "DevOps",
-    "CI/CD",
-    "Docker",
-    "Kubernetes",
-    "Artificial Intelligence",
-    "Machine Learning",
-    "Cybersecurity",
-    "Blockchain",
-    "Web3",
-    "Gaming",
-    "Gadgets",
-    "UI/UX",
-
-    "Business",
-    "Startup",
-    "Entrepreneurship",
-    "Marketing",
-    "SEO",
-    "Content Marketing",
-    "Social Media",
-    "Productivity",
-    "Leadership",
-    "Career Development",
-    "Finance",
-    "Investing",
-    "Cryptocurrency",
-    "Personal Finance",
-    "Real Estate",
-    "Economics",
-
-    "Lifestyle",
-    "Health",
-    "Wellness",
-    "Fitness",
-    "Nutrition",
-    "Mental Health",
-    "Mindfulness",
-    "Meditation",
-    "Yoga",
-    "Self-Improvement",
-    "Personal Growth",
-    "Relationships",
-    "Parenting",
-    "Home & Garden",
-    "Minimalism",
-    "Sustainability",
-
-    "Travel",
-    "Adventure",
-    "Backpacking",
-    "Digital Nomad",
-    "City Guide",
-    "Travel Tips",
-    "Culture",
-    "History",
-    "Food & Drink",
-    "Cuisine",
-    "Recipes",
-    "Wine",
-    "Coffee",
-    "Japan",
-    "Europe",
-    "Asia",
-
-    "Art",
-    "Design",
-    "Graphic Design",
-    "Photography",
-    "Filmmaking",
-    "Music",
-    "Writing",
-    "Blogging",
-    "Books",
-    "Reading",
-    "DIY",
-    "Crafts",
-    "Fashion",
-    "Movies",
-    "TV Shows",
-    "Hobby",
-
-    "Science",
-    "Space",
-    "Astronomy",
-    "Physics",
-    "Biology",
-    "Environment",
-
-    "Nature",
-    "Hiking",
-    "Outdoors",
-    "Wildlife",
-
-    "News",
-    "Politics",
-    "Education",
-    "Learning",
-    "Tutorial",
-    "How-To",
-    "Opinion",
-    "Review",
-    "Storytelling",
-    "Inspiration",
-    "Productivity Hacks",
-  ];
-
-  // useEffect(() => {
-  //   console.log("State has been updated. New tags:", selectedTags);
-  // }, [selectedTags]);
+  const [uploadedImages, setUploadedImages] = useState<
+    CloudinaryUploadResult[]
+  >([]);
 
   const handleAddTag = (tagToAdd: string) => {
     if (!selectedTags.includes(tagToAdd)) {
@@ -178,6 +53,10 @@ export default function WritePage() {
     setTagSearchResult(matches);
   };
 
+  const handleImageUploadCallback = (imageData: CloudinaryUploadResult) => {
+    setUploadedImages((prevImages) => [...prevImages, imageData]);
+  };
+
   const handleCreatePost = async (postStatus: string) => {
     setIsLoading(true);
     setError(null);
@@ -185,13 +64,13 @@ export default function WritePage() {
     const postData = {
       title: title,
       content: content,
-      coverImage: "https://picsum.photos/200/300", // This would come from an uploader
+      coverImage: uploadedImages[0].secure_url,
       tags: selectedTags,
       status: postStatus,
     };
-
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      // || "http://localhost:5050";
       const response = await fetch(`${apiUrl}/api/posts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -202,7 +81,11 @@ export default function WritePage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Failed to create post.");
 
-      router.push(`/posts/${data.slug}`);
+      if (postStatus === "published") {
+        router.push(`/posts/${data.slug}`);
+      } else if (postStatus === "draft") {
+        router.push(`/`);
+      }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -214,12 +97,9 @@ export default function WritePage() {
     }
   };
 
-  //TODO Add upload draft and publish logic
   const handleSaveDraftClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    // handleCreatePost("draft");
-    // console.log(content);
-    console.log(content);
+    handleCreatePost("draft");
   };
 
   const handlePublishClick = (e: React.MouseEvent) => {
@@ -229,7 +109,7 @@ export default function WritePage() {
 
   return (
     <div className="min-h-screen w-full bg-gray-100 dark:bg-black flex flex-col items-center p-4">
-      <div className="w-full md:w-1/2 max-w-4xl space-y-6">
+      <div className="w-full lg:w-1/2 max-w-4xl space-y-6">
         {error && (
           <div className="mt-4 text-red-600 bg-red-100 border border-red-400 rounded p-2">
             {error}
@@ -262,7 +142,10 @@ export default function WritePage() {
           disabled={isLoading}
         />
         <div className="relative  w-full border rounded-lg overflow-hidden">
-          <SimpleEditor onUpdate={setContent} />
+          <SimpleEditor
+            onUpdate={setContent}
+            onImageUpload={handleImageUploadCallback}
+          />
         </div>
         <div>
           <div className=" space-y-2">
@@ -286,7 +169,7 @@ export default function WritePage() {
               {tagSearchResult &&
                 tagSearchResult.map((tag) => (
                   <button
-                    className="bg-yellow-500 hover:bg-yellow-600 rounded-full p-2"
+                    className="bg-yellow-500 hover:bg-yellow-600 rounded-full p-2 capitalize"
                     key={`${tag}-search-results`}
                     onClick={() => handleAddTag(tag)}
                   >
@@ -302,9 +185,9 @@ export default function WritePage() {
                 className="py-2 px-2  bg-green-700 hover:bg-green-800 rounded-4xl flex items-center gap-2"
                 key={`${tag}-selected-tag`}
               >
-                <p> {tag}</p>
+                <p className=" capitalize"> {tag}</p>
                 <button
-                  className="bg-green-700 hover:bg-green-800 rounded-full"
+                  className="bg-green-700 hover:bg-green-800 rounded-full "
                   onClick={() => {
                     handleRemoveTag(tag);
                   }}

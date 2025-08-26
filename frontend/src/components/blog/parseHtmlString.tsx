@@ -5,7 +5,7 @@ import { TiptapDocument, Block, InlineContent } from "@/lib/tiptap-types";
 const styleMap: Record<string, string> = {
   doc: "text-gray-800 dark:text-gray-200",
   heading_1: "text-4xl font-bold my-6",
-  heading_2: "text-3xl font-bold my-5 border-b pb-2",
+  heading_2: "text-3xl font-bold my-6 pt-6 pb-2",
   heading_3: "text-2xl font-bold my-4",
   heading_4: "text-xl font-bold my-3",
   paragraph: "my-4 leading-relaxed",
@@ -16,7 +16,7 @@ const styleMap: Record<string, string> = {
     "border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic my-6",
   codeBlock:
     "bg-gray-900 text-white rounded-lg p-4 my-6 overflow-x-auto font-mono text-sm",
-  image: "my-6 rounded-lg overflow-hidden",
+  image: "my-6 relative flex justify-center max-h-[468px] ",
   bold: "font-bold",
   italic: "italic",
   underline: "underline",
@@ -175,7 +175,8 @@ const renderBlock = (block: Block, index: number): JSX.Element | null => {
             alt={alt}
             width={800}
             height={450}
-            className="w-full h-auto rounded-lg"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="rounded-lg object-cover object-center"
           />
         </figure>
       );

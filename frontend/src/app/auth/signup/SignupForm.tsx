@@ -108,7 +108,8 @@ export default function SignupForm() {
 
     try {
       // Use environment variable for the API URL. It's safer and more standard.
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      // || "http://localhost:5050";
 
       const response = await fetch(`${apiUrl}/api/auth/signup`, {
         method: "POST",

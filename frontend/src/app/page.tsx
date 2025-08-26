@@ -11,25 +11,22 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { BookmarkPlus, MessageCircle, ThumbsUp } from "lucide-react";
+import { BookmarkPlus, Heart, MessageCircle } from "lucide-react";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  blogParsedContent,
+  Blog,
+  getInitials,
+  GetXDaysAgo,
+} from "@/lib/BlogFunctionLib";
 
 export const dynamic = "force-dynamic";
-
-type FeedPost = {
-  _id: string;
-  title: string;
-  content: string;
-  coverImage: string;
-  commentCount: number;
-  likeCount: number;
-  slug: string;
-};
 
 const testFilter = "none";
 
 export default function HomePage() {
-  const [posts, setPosts] = useState<FeedPost[]>([]);
+  const [posts, setPosts] = useState<Blog[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +51,7 @@ export default function HomePage() {
         }
 
         const dataResponse = await response.json();
+        console.log(dataResponse);
         setPosts(dataResponse.posts || []);
         setTotalPages(dataResponse.totalPages || 1);
       } catch (error) {
@@ -136,95 +134,87 @@ export default function HomePage() {
     return pageNumbers;
   };
 
+  //TODO add conditional filtering option to filter posts in feed
   return (
     <div className="min-h-screen w-full flex justify-center">
-      <div className=" h-screen md:w-1/4  w-0 hidden md:block"></div>
-      <div className=" h-screen md:w-1/2 p-4 w-full">
-        <div className="md:p-4 ">
-          <div className="min-h-[400px]">
+      <div className=" h-screen xl:w-1/4 lg:w-1/5  w-0 hidden md:block"></div>
+      <div className=" h-screen xl:w-1/2 lg:w-3/5 p-4 w-full">
+        <div className="md:p-4 w-full ">
+          <div className="min-h-[400px] w-full">
             {isLoading ? (
               <p className="text-center">Loading posts...</p>
             ) : (
-              <div className="space-y-10">
+              <div className="space-y-10 w-full flex flex-col items-center">
                 {posts.map((data) => {
                   return (
-                    <Link href={`/posts/${data.slug}`} key={data._id}>
-                      <div
-                        key={data._id}
-                        className=" w-full flex md:flex-row flex-col p-4 hover:bg-gray-50/5 rounded-3xl min-h-44 gap-2 md:gap-10"
-                      >
-                        <div className=" md:w-3/4 w-full gap-y-3 flex md:flex-col flex-row">
-                          <div className=" w-2/3">
-                            <div className="">
-                              <p className=" text-lg mb-2 font-bold">
-                                {data.title}
-                              </p>
-                            </div>
-                            <div className="">
-                              <p className="text-sm md:line-clamp-3 line-clamp-2">
-                                {data.content}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className=" md:flex hidden justify-between my-3">
-                            <div className=" flex gap-4">
-                              <div className=" flex gap-1 items-center">
-                                <ThumbsUp className=" size-5" />{" "}
-                                <span>{data.likeCount}</span>
-                              </div>
-                              <div className=" flex gap-1 items-center">
-                                <MessageCircle className=" size-5" />{" "}
-                                <span>{data.commentCount}</span>
-                              </div>
-                            </div>
-                            <div>
-                              <div>
-                                <BookmarkPlus />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className=" md:hidden block w-1/3   bg-amber-300 relative md:rounded-2xl rounded-sm aspect-4/3 self-start contain-content">
-                            <Image
-                              alt="ddd"
-                              src={data.coverImage}
-                              fill
-                              priority
-                              style={{ objectFit: "cover" }}
+                    <div
+                      key={data._id}
+                      className=" w-full  sm:p-4 hover:bg-gray-50/5 rounded-3xl min-h-44 gap-2 md:gap-10"
+                    >
+                      <div className="w-full flex flex-col">
+                        <div className=" flex items-center gap-2 pb-3">
+                          <Avatar className=" size-5 ">
+                            <AvatarImage
+                              className=" select-none"
+                              src={data.author.authorAvatar}
                             />
-                          </div>
+                            <AvatarFallback className=" bg-amber-300 text-xs">
+                              {getInitials(data)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <p className=" text-sm" key={data.author.username}>
+                            {data.author.username}
+                          </p>
                         </div>
-
-                        <div className=" md:w-1/4">
-                          <div className=" flex justify-between mt-3 md:hidden">
-                            <div className=" flex gap-4">
-                              <div>
-                                <ThumbsUp className=" size-5" />
+                        <Link href={`/posts/${data.slug}`} key={data._id}>
+                          <div className=" w-full flex gap-5 h-full">
+                            <div className=" lg:w-3/4 md:w-2/3 w-full ">
+                              <div className="">
+                                <p className=" sm:text-xl text-lg font-bold ">
+                                  {data.title}
+                                </p>
                               </div>
-                              <div>
-                                <MessageCircle className=" size-5" />
+                              <div className="">
+                                <p className=" line-clamp-3 sm:text-md text-sm text-muted">
+                                  {blogParsedContent(data.content)}
+                                </p>
                               </div>
                             </div>
-                            <div>
-                              <div>
-                                <BookmarkPlus />
-                              </div>
+                            <div className=" lg:w-1/4 md:w-1/3 w-full sm:h-full h-2/3 contain-content aspect-[4/3] rounded-3xl">
+                              <Image
+                                alt="ddd"
+                                src={data.coverImage}
+                                fill
+                                priority
+                                style={{ objectFit: "cover" }}
+                              />
                             </div>
                           </div>
+                        </Link>
+                        <div className=" flex justify-between pt-4 ">
+                          <div className=" flex gap-4 text-xs items-center">
+                            <p key={data.createdAt}>
+                              <GetXDaysAgo date={data.createdAt} />{" "}
+                            </p>
 
-                          <div className=" hidden md:block relative md:rounded-2xl rounded-sm aspect-4/3 self-start contain-content">
-                            <Image
-                              alt="ddd"
-                              src={data.coverImage}
-                              fill
-                              priority
-                              style={{ objectFit: "cover" }}
-                            />
+                            <span className=" flex gap-2 items-center">
+                              <Heart className=" size-5" />{" "}
+                              <span>{data.likeCount}</span>
+                            </span>
+
+                            <span className="flex gap-2 items-center ">
+                              <MessageCircle className=" size-5" />{" "}
+                              <span>{data.commentCount}</span>
+                            </span>
+                          </div>
+                          <div>
+                            <button className=" cursor-pointer">
+                              <BookmarkPlus className=" size-5" />
+                            </button>
                           </div>
                         </div>
                       </div>
-                    </Link>
+                    </div>
                   );
                 })}
               </div>
@@ -269,7 +259,7 @@ export default function HomePage() {
         </div>
         <div className=" w-full flex flex-col gap-4"></div>
       </div>
-      <div className=" h-screen md:w-1/4  w-0 hidden md:block"></div>
+      <div className=" h-screen xl:w-1/4 lg:w-1/5  w-0 hidden md:block"></div>
     </div>
   );
 }

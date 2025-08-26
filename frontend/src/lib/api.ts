@@ -23,7 +23,8 @@ export async function getHomePageData(): Promise<ApiResponse | null> {
     const cookieStore = cookies();
     const token = cookieStore.get("token")?.value;
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    //  || "http://localhost:5050";
 
     const response = await fetch(`${apiUrl}/`, {
       headers: {

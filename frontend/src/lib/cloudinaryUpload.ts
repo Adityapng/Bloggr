@@ -16,10 +16,29 @@ import { MAX_FILE_SIZE } from "./tiptap-utils";
 //   imageAspectRatioDenominator: number;
 // }
 
+export interface CloudinaryUploadResult {
+  asset_id: string;
+  public_id: string;
+  version: number;
+  width: number;
+  height: number;
+  format: string;
+  resource_type: "image" | "video" | "raw";
+  created_at: string;
+  bytes: number;
+  type: "upload";
+  etag: string;
+  url: string;
+  secure_url: string;
+  folder?: string;
+  original_filename: string;
+}
+
 //TODO Add upload image finction with cloudinary
 const getCloudinarySignature = async () => {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    // || "http://localhost:5050";
     const response = await fetch(`${apiUrl}/api/uploads/signature`, {
       method: "GET",
       credentials: "include",
@@ -28,7 +47,6 @@ const getCloudinarySignature = async () => {
     if (!response.ok) {
       throw new Error("Failed to get a signature from the server.");
     }
-    console.log(response);
     return response.json();
   } catch (error) {
     console.error("Error getting Cloudinary signature:", error);
@@ -36,7 +54,9 @@ const getCloudinarySignature = async () => {
   }
 };
 
-export const handleImageUpload = async (file: File): Promise<string> => {
+export const handleImageUpload = async (
+  file: File
+): Promise<CloudinaryUploadResult> => {
   if (!file) {
     throw new Error("No file provided.");
   }
@@ -67,34 +87,5 @@ export const handleImageUpload = async (file: File): Promise<string> => {
     throw new Error(`Cloudinary upload failed: ${errorData.error.message}`);
   }
 
-  const data = await response.json();
-  // const getImageAspectRatio = (input1: number, input2: number) => {
-  //   function myFunction(a: number, b: number) {
-  //     if (b === 0) {
-  //       return a;
-  //     }
-  //     return myFunction(b, a % b);
-  //   }
-  //   const result = myFunction(input1, input2);
-  //   const ARnumerator = data.height / result;
-  //   const ARdenominator = data.width / result;
-  //   const aspectRatio = `${ARnumerator}/${ARdenominator}`;
-  //   const returnData = {
-  //     aspectRatio: aspectRatio,
-  //     ARnumerator: ARnumerator,
-  //     ARdenominator: ARdenominator,
-  //   };
-  //   return returnData;
-  // };
-  // const returnData = getImageAspectRatio(data.height, data.width);
-  // const imageData: ReturnImageData = {
-  //   imageURL: data.secure_url,
-  //   imageHeight: data.height,
-  //   imageWidth: data.width,
-  //   imageAspectRatio: returnData.aspectRatio,
-  //   imageAspectRatioNumerator: returnData.ARnumerator,
-  // imageAspectRatioDenominator: returnData.ARdenominator,
-  // };
-
-  return data.secure_url;
+  return response.json();
 };
