@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, User, Mail, Lock, UserCheck } from "lucide-react";
+import { fetcher } from "@/lib/fetcher";
 
 // --- Type Definitions ---
 interface FormData {
@@ -107,16 +108,13 @@ export default function SignupForm() {
     setErrors({});
 
     try {
-      // Use environment variable for the API URL. It's safer and more standard.
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      // || "http://localhost:5050";
-
-      const response = await fetch(`${apiUrl}/api/auth/signup`, {
+      const path = "/api/auth/signup";
+      const options = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-        credentials: "include",
-      });
+      };
+      const response = await fetcher(path, options);
 
       const data = await response.json();
 

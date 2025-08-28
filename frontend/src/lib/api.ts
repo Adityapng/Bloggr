@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { fetcher } from "./fetcher";
 
 export const dynamic = "force-dynamic";
 
@@ -18,20 +18,10 @@ interface ApiResponse {
   user: userData | null;
 }
 
-export async function getHomePageData(): Promise<ApiResponse | null> {
+export async function handleLoggedInUserData(): Promise<ApiResponse | null> {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get("token")?.value;
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    //  || "http://localhost:5050";
-
-    const response = await fetch(`${apiUrl}/`, {
-      headers: {
-        ...(token && { Cookie: `token=${token}` }),
-      },
-      cache: "no-store",
-    });
+    const path = "/";
+    const response = await fetcher(path);
 
     if (!response.ok) {
       throw new Error(`API responded with status: ${response.status}`);

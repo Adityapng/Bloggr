@@ -1,3 +1,4 @@
+import { fetcher } from "./fetcher";
 import { MAX_FILE_SIZE } from "./tiptap-utils";
 
 /**
@@ -6,15 +7,6 @@ import { MAX_FILE_SIZE } from "./tiptap-utils";
   @param abortSignal
   @returns 
  **/
-
-// interface ReturnImageData {
-//   imageURL: string;
-//   imageHeight: number;
-//   imageWidth: number;
-//   imageAspectRatio: string;
-//   imageAspectRatioNumerator: number;
-//   imageAspectRatioDenominator: number;
-// }
 
 export interface CloudinaryUploadResult {
   asset_id: string;
@@ -37,12 +29,8 @@ export interface CloudinaryUploadResult {
 //TODO Add upload image finction with cloudinary
 const getCloudinarySignature = async () => {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    // || "http://localhost:5050";
-    const response = await fetch(`${apiUrl}/api/uploads/signature`, {
-      method: "GET",
-      credentials: "include",
-    });
+    const path = "/api/uploads/signature";
+    const response = await fetcher(path);
 
     if (!response.ok) {
       throw new Error("Failed to get a signature from the server.");

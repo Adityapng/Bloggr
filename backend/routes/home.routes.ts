@@ -6,9 +6,11 @@ const homeRoutes = Router();
 homeRoutes.get("/", async (req: Request, res: Response) => {
   try {
     if (req.user) {
-      const currentUser = await User.findOne({ _id: req.user.userid });
+      const currentUser = await User.findById(req.user.userid);
+      if (!currentUser) {
+        return res.json({ isLoggedIn: false, user: null });
+      }
 
-      console.log(currentUser);
       return res.json({
         isLoggedIn: true,
         user: currentUser,
@@ -16,12 +18,15 @@ homeRoutes.get("/", async (req: Request, res: Response) => {
     } else {
       return res.json({
         isLoggedIn: false,
-        user: null,
+        user: {
+          id: req.sessionId,
+          username: "Guest",
+        },
       });
     }
   } catch (error) {
     console.error("API Error at root:", error);
-    return res.status(500).json({ isLoggedIn: false, user: null });
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 

@@ -12,7 +12,7 @@ export interface IUser extends Document {
   role: UserRole;
   avatarURL?: string;
   bio?: string;
-  fullName?: string; // Virtual field
+  fullName?: string;
   createdAt: Date;
   updatedAt: Date;
 }

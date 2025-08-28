@@ -10,11 +10,12 @@ export interface IPost extends Document {
   likes: Types.ObjectId[];
   bookmarks: Types.ObjectId[];
   commenter: Types.ObjectId[];
-  reads: number;
+  reads: number[];
   registeredReader: Types.ObjectId[];
   registeredReadersCount: number;
   likeCount: number;
   bookmarkCount: number;
+  readCount: number;
   commentCount: number;
   tags: string[];
   status: "draft" | "published";
@@ -66,7 +67,8 @@ const postSchema = new Schema<IPost>(
       },
     ],
     reads: {
-      type: Number,
+      type: [String],
+      default: [],
     },
     registeredReader: [
       {
@@ -121,8 +123,12 @@ postSchema.virtual("bookmarkCount").get(function () {
   return this.bookmarks.length;
 });
 
-postSchema.virtual("registeredUserReadCount").get(function () {
+postSchema.virtual("registeredReadersCount").get(function () {
   return this.registeredReader.length;
+});
+
+postSchema.virtual("readCount").get(function () {
+  return this.reads.length;
 });
 
 postSchema.set("toJSON", { virtuals: true });

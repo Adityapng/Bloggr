@@ -20,7 +20,7 @@ export type Blog = {
 
   createdAt: string;
   readingTime: number;
-  reads: number;
+  readCount: number;
 };
 
 export const blogParsedContent = (data: string) => {

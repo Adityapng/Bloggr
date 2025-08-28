@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, User, Lock } from "lucide-react";
+import { fetcher } from "@/lib/fetcher";
 
 // --- Type Definitions ---
 interface FormData {
@@ -62,10 +63,9 @@ export default function SigninForm() {
 
     setIsLoading(true);
 
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      // || "http://localhost:5050";
+    console.log("uyuuuyy");
 
+    try {
       const isEmail = formData.loginId.includes("@");
       const body = {
         password: formData.password,
@@ -73,17 +73,19 @@ export default function SigninForm() {
           ? { email: formData.loginId }
           : { username: formData.loginId }),
       };
-
-      const response = await fetch(`${apiUrl}/api/auth/signin`, {
+      const path = "/api/auth/signin";
+      const options = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-        credentials: "include",
-      });
+      };
+
+      const response = await fetcher(path, options);
 
       const data = await response.json();
 
       if (response.ok) {
+        console.log("Signin response ok");
         router.push("/");
         router.refresh();
       } else {

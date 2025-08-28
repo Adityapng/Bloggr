@@ -1,5 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Blog, blogParsedContent } from "@/lib/BlogFunctionLib";
+import { fetcher } from "@/lib/fetcher";
+import { Eye } from "lucide-react";
 
 interface PageProps {
   params: { [key: string]: string };
@@ -7,26 +9,33 @@ interface PageProps {
 
 export const dynamic = "force-dynamic";
 
+async function getPostData(slug: string) {
+  try {
+    const response = await fetcher(`/api/posts/${slug}`);
+    if (!response.ok) {
+      console.error(
+        "SERVER responded with an error:",
+        response.status,
+        response.statusText
+      );
+      const errorBody = await response.text();
+      console.error(
+        "SERVER response body:",
+        errorBody.substring(0, 200) + "..."
+      );
+      throw new Error("Server response was not OK");
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching post data:", error);
+    return null;
+  }
+}
+
 export default async function Page({ params }: PageProps) {
   const { slug } = params;
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const finalURL = `${apiUrl}/api/posts/${slug}`;
-
-  const response = await fetch(finalURL);
-
-  if (!response.ok) {
-    console.error(
-      "SERVER responded with an error:",
-      response.status,
-      response.statusText
-    );
-    const errorBody = await response.text();
-    console.error("SERVER response body:", errorBody.substring(0, 200) + "...");
-    throw new Error("Server response was not OK");
-  }
-
-  const postData: Blog = await response.json();
+  const postData: Blog = await getPostData(slug);
 
   const GetXDaysAgo: React.FC<{ date: string }> = ({ date }) => {
     const getDaysAgo = (dateString: string) => {
@@ -56,9 +65,9 @@ export default async function Page({ params }: PageProps) {
       <div className=" w-full lg:w-3/4 sm:w-4/5 max-sm:px-4 max-w-4xl">
         <p className=" font-bold text-5xl">{postData.title}</p>
         <div className=" flex items-center pt-4 justify-between">
-          <div className=" flex gap-4">
+          <div className=" flex gap-4 items-center">
             <div className=" flex items-center gap-2">
-              <Avatar className=" size-5 ">
+              <Avatar className=" size-9 ">
                 <AvatarImage
                   className=" select-none"
                   src={postData.author.authorAvatar}
@@ -68,18 +77,24 @@ export default async function Page({ params }: PageProps) {
                 </AvatarFallback>
               </Avatar>
               <p className=" text-sm" key={postData.author.username}>
-                {postData.author.username}
+                {postData.author.firstName}
               </p>
             </div>
-
-            <p className=" text-sm">{postData.readingTime} min read</p>
-
-            {/* <p className=" text-sm">{postData.reads}</p>s */}
-          </div>
-          <div>
-            <p className=" text-sm">
-              <GetXDaysAgo date={postData.createdAt} />{" "}
-            </p>
+            <span>&#11825;</span>
+            <div>
+              <p className=" text-sm">{postData.readingTime} min read</p>
+            </div>
+            <span>&#11825;</span>
+            <div className="flex items-center gap-1">
+              <Eye />
+              <p className=" text-sm">{postData.readCount}</p>
+            </div>
+            <span>&#11825;</span>
+            <div>
+              <p className=" text-sm">
+                <GetXDaysAgo date={postData.createdAt} />{" "}
+              </p>
+            </div>
           </div>
         </div>
         <br />

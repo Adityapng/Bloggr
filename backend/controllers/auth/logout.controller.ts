@@ -2,13 +2,11 @@ import { Request, Response } from "express";
 
 const handleUserLogout = async (req: Request, res: Response) => {
   try {
-    // The options (httpOnly, secure, etc.) MUST match the options used when setting the cookie.
-    // console.log("hi");
     res.cookie("token", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax", // Must match the setting used in login
-      maxAge: 0, // Tell the browser to expire it immediately
+      sameSite: "lax",
+      maxAge: 0,
       path: "/",
     });
 

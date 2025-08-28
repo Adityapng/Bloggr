@@ -20,6 +20,7 @@ import {
   getInitials,
   GetXDaysAgo,
 } from "@/lib/BlogFunctionLib";
+import { fetcher } from "@/lib/fetcher";
 
 export const dynamic = "force-dynamic";
 
@@ -35,12 +36,9 @@ export default function HomePage() {
     const fetchPosts = async () => {
       setIsLoading(true);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-        const finalURL = `${apiUrl}/api/posts?page=${currentPage}&tag=${testFilter}`;
-
-        console.log("FRONTEND: Attempting to fetch from URL:", finalURL);
-
-        const response = await fetch(finalURL);
+        const response = await fetcher(
+          `/api/posts?page=${currentPage}&tag=${testFilter}`
+        );
 
         if (!response.ok) {
           console.error(
@@ -51,7 +49,6 @@ export default function HomePage() {
         }
 
         const dataResponse = await response.json();
-        console.log(dataResponse);
         setPosts(dataResponse.posts || []);
         setTotalPages(dataResponse.totalPages || 1);
       } catch (error) {
@@ -153,7 +150,7 @@ export default function HomePage() {
                     >
                       <div className="w-full flex flex-col">
                         <div className=" flex items-center gap-2 pb-3">
-                          <Avatar className=" size-5 ">
+                          <Avatar className=" size-7 ">
                             <AvatarImage
                               className=" select-none"
                               src={data.author.authorAvatar}

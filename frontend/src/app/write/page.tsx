@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Tags, X } from "lucide-react";
 import { CloudinaryUploadResult } from "@/lib/cloudinaryUpload";
 import { blogTags } from "@/components/Taglist";
+import { fetcher } from "@/lib/fetcher";
 
 export default function WritePage() {
   const router = useRouter();
@@ -69,14 +70,13 @@ export default function WritePage() {
       status: postStatus,
     };
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      // || "http://localhost:5050";
-      const response = await fetch(`${apiUrl}/api/posts`, {
+      const path = "/api/posts";
+      const options = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(postData),
-        credentials: "include",
-      });
+      };
+      const response = await fetcher(path, options);
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Failed to create post.");

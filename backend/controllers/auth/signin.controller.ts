@@ -5,7 +5,7 @@ import { generateToken } from "../../config/tokens";
 
 const handleUserSignin = async (req: Request, res: Response) => {
   try {
-    console.log("Current NODE_ENV:", process.env.NODE_ENV);
+    // console.log("Current NODE_ENV:", process.env.NODE_ENV);
     const { username, email, password } = req.body;
 
     if (!(username || email) || !password) {
@@ -50,9 +50,11 @@ const handleUserSignin = async (req: Request, res: Response) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
+      expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
       path: "/",
     });
+
+    res.clearCookie("anon_user_token", { path: "/" });
 
     res.status(200).json({
       message: "Signin successful",
@@ -63,7 +65,7 @@ const handleUserSignin = async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    console.error("❌ Signin error:", error);
+    console.error("Signin error:", error);
 
     if (error instanceof Error) {
       console.error("Error name:", error.name);

@@ -1,9 +1,8 @@
 "use client";
-
-// import "./envConfig.ts";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { fetcher } from "@/lib/fetcher";
 
 interface AvatarUploaderProps {
   onUploadSuccess: (url: string) => void;
@@ -21,12 +20,8 @@ export default function AvatarUploader({
 
     // --- Step 1: Go to our backend (the manager) to get the permission slip ---
     const getSignature = async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/uploads/signature`,
-        {
-          credentials: "include",
-        }
-      );
+      const path = "/api/uploads/signature";
+      const response = await fetcher(path);
       return response.json();
     };
     const { timestamp, signature } = await getSignature();

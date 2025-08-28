@@ -19,7 +19,9 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.4",
-    "slugify": "^1.6.6"
+    "ms": "^2.1.3",
+    "slugify": "^1.6.6",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.6",

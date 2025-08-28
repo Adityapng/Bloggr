@@ -19,9 +19,7 @@ const handleUserSignup = async (req: Request, res: Response) => {
       username: username.toLowerCase(),
     });
     if (existingUsername) {
-      return res
-        .status(400)
-        .json({ error: "A user already exists with this username" });
+      return res.status(400).json({ error: "Username already exists" });
     }
 
     const newUSer = new User({
@@ -42,10 +40,10 @@ const handleUserSignup = async (req: Request, res: Response) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
+      expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
       path: "/",
     });
-    console.log(token);
+    console.log(token, "from signup controller");
 
     res.status(200).json({
       message: "Signin successful",
@@ -56,7 +54,7 @@ const handleUserSignup = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.log("Signup error:", error);
+    console.log("Signup error from signup controller:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

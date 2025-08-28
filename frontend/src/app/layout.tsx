@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getHomePageData } from "@/lib/api";
+import { handleLoggedInUserData } from "@/lib/api";
 import { Noto_Sans } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
 };
 
-interface HomePageData {
+interface LoggedInUserData {
   isLoggedIn: boolean;
   user: {
     username: string;
@@ -38,9 +38,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const data: HomePageData | null = await getHomePageData();
+  const data: LoggedInUserData | null = await handleLoggedInUserData();
 
-  const navbarData: HomePageData = data || {
+  const navbarData: LoggedInUserData = data || {
     isLoggedIn: false,
     user: null,
   };
