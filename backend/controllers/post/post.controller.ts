@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import Post from "../../models/post.model";
 import { Types } from "mongoose";
-import { log } from "console";
 
 export const getAllPost = async (req: Request, res: Response) => {
   try {

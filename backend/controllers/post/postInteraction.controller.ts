@@ -5,14 +5,14 @@ import { Response, Request } from "express";
 
 const likeHandeller = async (req: Request, res: Response) => {
   try {
-    const { PostID } = req.params;
+    const { postid } = req.params;
     const userid = req.user.userid;
 
     if (!userid) {
       return res.status(400).json({ error: "Login to like a post" });
     }
 
-    const post = await Post.findById(PostID);
+    const post = await Post.findById(postid);
 
     if (!post) {
       return res.status(404).json({ error: "Post not found" });
@@ -43,14 +43,14 @@ const likeHandeller = async (req: Request, res: Response) => {
 
 const bookmarkHandeller = async (req: Request, res: Response) => {
   try {
-    const { PostID } = req.params;
+    const { postid } = req.params;
     const userid = req.user.userid;
 
     if (!userid) {
       return res.status(400).json({ error: "Login to bookmark a post" });
     }
 
-    const post = await Post.findById(PostID);
+    const post = await Post.findById(postid);
 
     if (!post) {
       return res.status(404).json({ error: "Post not found" });
@@ -81,7 +81,7 @@ const bookmarkHandeller = async (req: Request, res: Response) => {
 
 const commentHandeller = async (req: Request, res: Response) => {
   try {
-    const { PostID } = req.params;
+    const { postid } = req.params;
     const { content } = req.body;
     const { userid } = req.user;
 
@@ -89,7 +89,7 @@ const commentHandeller = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Login to like a post" });
     }
 
-    const post = await Post.findById(PostID);
+    const post = await Post.findById(postid);
 
     if (!post) {
       return res.status(404).json({ error: "Post not found" });
@@ -98,12 +98,12 @@ const commentHandeller = async (req: Request, res: Response) => {
     const newComment = new Comment({
       content,
       author: userid,
-      post: PostID,
+      post: postid,
     });
 
     await newComment.save();
 
-    await Post.findByIdAndUpdate(PostID, { $inc: { commentCount: 1 } });
+    await Post.findByIdAndUpdate(postid, { $inc: { commentCount: 1 } });
 
     const populatedComment = await Comment.findById(newComment._id).populate(
       "author",
