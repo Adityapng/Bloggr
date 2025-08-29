@@ -16,6 +16,8 @@ export type Blog = {
   likeCount: number;
   slug: string;
 
+  likes: string[];
+  bookmarks: string[];
   author: authorObject;
 
   createdAt: string;

@@ -3,6 +3,7 @@ import { fetcher } from "./fetcher";
 export const dynamic = "force-dynamic";
 
 interface userData {
+  _id: string;
   username: string;
   email: string;
   firstName: string;
@@ -13,7 +14,7 @@ interface userData {
   role: string;
 }
 
-interface ApiResponse {
+export interface ApiResponse {
   isLoggedIn: boolean;
   user: userData | null;
 }
