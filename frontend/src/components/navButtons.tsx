@@ -39,8 +39,12 @@ export function GoToCreatePost() {
     router.push("/write");
   };
   return (
-    <Button className="" onClick={getCreatePost} size="sm">
-      <SquarePen color="#000000" />
+    <Button
+      className=" dark:bg-transparent dark:text-white border dark:border-zinc-600 border-zinc-200 bg-white text-black"
+      onClick={getCreatePost}
+      size="sm"
+    >
+      <SquarePen />
       <span>Write</span>
     </Button>
   );

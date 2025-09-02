@@ -129,7 +129,6 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
               placeholder="Search"
               className=" md:w-80 w-40 backdrop-blur-xs lg:block hidden"
             />
-            <p>{user?.username}</p>
           </div>
         </div>
         <div className=" flex md:gap-2 gap-1 items-center">

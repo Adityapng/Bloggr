@@ -56,7 +56,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <header className="md:px-10 px-5 py-6 sticky top-0 z-50">
+          <header className="md:px-10 px-5 py-5 sticky top-0 z-50 backdrop-blur-sm ">
             <Navbar user={navbarData.user} isLoggedIn={navbarData.isLoggedIn} />
           </header>{" "}
           {children}

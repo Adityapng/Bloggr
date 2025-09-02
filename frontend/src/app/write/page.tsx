@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tags, X } from "lucide-react";
 import { CloudinaryUploadResult } from "@/lib/cloudinaryUpload";
-import { blogTags } from "@/components/Taglist";
 import { fetcher } from "@/lib/fetcher";
 
 export default function WritePage() {
@@ -23,6 +22,31 @@ export default function WritePage() {
   const [uploadedImages, setUploadedImages] = useState<
     CloudinaryUploadResult[]
   >([]);
+  const [wordCount, setWordCount] = useState(0);
+
+  const [allCategorizedTags, setAllCategorizedTags] = useState<
+    Record<string, string[]>
+  >({});
+  const [areTagsLoading, setAreTagsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetcher("/api/tags");
+        const data = await response.json();
+        setAllCategorizedTags(data);
+      } catch (error) {
+        console.error("Failed to load tags:", error);
+      } finally {
+        setAreTagsLoading(false);
+      }
+    };
+    fetchTags();
+  }, []);
+
+  const allTagsFlat = useMemo(() => {
+    return Object.values(allCategorizedTags).flat();
+  }, [allCategorizedTags]);
 
   const handleAddTag = (tagToAdd: string) => {
     if (!selectedTags.includes(tagToAdd)) {
@@ -46,7 +70,7 @@ export default function WritePage() {
       setTagSearchResult([]);
       return;
     }
-    const matches = blogTags.filter(
+    const matches = allTagsFlat.filter(
       (blogTag: string) =>
         blogTag.toLowerCase().includes(searchValue.toLowerCase()) &&
         !selectedTags.includes(blogTag)
@@ -62,12 +86,20 @@ export default function WritePage() {
     setIsLoading(true);
     setError(null);
 
+    if (selectedTags.length == 0) {
+      setError("Atleast one tag is required");
+    }
+
+    const coverimageurl =
+      (uploadedImages[0] && uploadedImages[0].secure_url) || "";
+
     const postData = {
       title: title,
       content: content,
-      coverImage: uploadedImages[0].secure_url,
+      coverImage: coverimageurl,
       tags: selectedTags,
       status: postStatus,
+      wordCount: wordCount,
     };
     try {
       const path = "/api/posts";
@@ -145,58 +177,66 @@ export default function WritePage() {
           <SimpleEditor
             onUpdate={setContent}
             onImageUpload={handleImageUploadCallback}
+            onWordCountChange={setWordCount}
           />
         </div>
+
         <div>
-          <div className=" space-y-2">
-            <Label htmlFor="tag" className=" text-lg pl-1">
-              Tags
-            </Label>
-            <div className="relative">
-              <Tags className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              {/* search tag */}
-              <Input
-                id="tag"
-                type="text"
-                placeholder="Add a tag..."
-                onChange={(e) => handleTagSearch(e.target.value)}
-                className={`pl-10`}
-                disabled={isLoading}
-              />
-            </div>
-            {/* tag search result section */}
-            <div className=" flex flex-wrap gap-2">
-              {tagSearchResult &&
-                tagSearchResult.map((tag) => (
-                  <button
-                    className="bg-yellow-500 hover:bg-yellow-600 rounded-full p-2 capitalize"
-                    key={`${tag}-search-results`}
-                    onClick={() => handleAddTag(tag)}
-                  >
-                    {tag}
-                  </button>
-                ))}
-            </div>
-          </div>
-          {/* selected tag display section */}
-          <div className=" flex gap-2 w-full flex-wrap p-4">
-            {selectedTags.map((tag) => (
-              <div
-                className="py-2 px-2  bg-green-700 hover:bg-green-800 rounded-4xl flex items-center gap-2"
-                key={`${tag}-selected-tag`}
-              >
-                <p className=" capitalize"> {tag}</p>
-                <button
-                  className="bg-green-700 hover:bg-green-800 rounded-full "
-                  onClick={() => {
-                    handleRemoveTag(tag);
-                  }}
-                >
-                  <X />
-                </button>
+          {areTagsLoading ? (
+            <p>Loading Tags...</p>
+          ) : (
+            <div>
+              <div className=" space-y-2">
+                <Label htmlFor="tag" className=" text-lg pl-1">
+                  Tags
+                </Label>
+                <div className="relative">
+                  <Tags className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                  {/* search tag */}
+                  <Input
+                    id="tag"
+                    type="text"
+                    placeholder="Add a tag..."
+                    onChange={(e) => handleTagSearch(e.target.value)}
+                    className={`pl-10`}
+                    disabled={isLoading}
+                  />
+                </div>
+                {/* tag search result section */}
+                <div className=" flex flex-wrap gap-2">
+                  {tagSearchResult &&
+                    tagSearchResult.map((tag) => (
+                      <button
+                        className="bg-yellow-500 hover:bg-yellow-600 rounded-full p-2 capitalize"
+                        key={`${tag}-search-results`}
+                        onClick={() => handleAddTag(tag)}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                </div>
               </div>
-            ))}
-          </div>
+              {/* selected tag display section */}
+              <div className=" flex gap-2 w-full flex-wrap p-4">
+                {selectedTags.map((tag) => (
+                  <div
+                    className="py-2 px-2  bg-green-700 hover:bg-green-800 rounded-4xl flex items-center gap-2"
+                    key={`${tag}-selected-tag`}
+                  >
+                    <p className=" capitalize"> {tag}</p>
+                    <button
+                      className="bg-green-700 hover:bg-green-800 rounded-full "
+                      onClick={() => {
+                        handleRemoveTag(tag);
+                      }}
+                    >
+                      <X />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

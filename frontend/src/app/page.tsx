@@ -21,23 +21,23 @@ import {
   GetXDaysAgo,
 } from "@/lib/BlogFunctionLib";
 import { fetcher } from "@/lib/fetcher";
+import { ScrollableButtonList } from "@/components/feedFilter/FeedFilter";
 
 export const dynamic = "force-dynamic";
-
-const testFilter = "none";
 
 export default function HomePage() {
   const [posts, setPosts] = useState<Blog[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [filterValue, setFilterValue] = useState("All");
 
   useEffect(() => {
     const fetchPosts = async () => {
       setIsLoading(true);
       try {
         const response = await fetcher(
-          `/api/posts?page=${currentPage}&tag=${testFilter}`
+          `/api/posts?page=${currentPage}&filter=${filterValue}`
         );
 
         if (!response.ok) {
@@ -59,7 +59,7 @@ export default function HomePage() {
     };
 
     fetchPosts();
-  }, [currentPage]);
+  }, [currentPage, filterValue]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -131,12 +131,23 @@ export default function HomePage() {
     return pageNumbers;
   };
 
+  const filterFeed = (value: string) => {
+    setFilterValue(value);
+  };
+
   //TODO add conditional filtering option to filter posts in feed
   return (
     <div className="min-h-screen w-full flex justify-center">
       <div className=" h-screen xl:w-1/4 lg:w-1/5  w-0 hidden md:block"></div>
       <div className=" h-screen xl:w-1/2 lg:w-3/5 p-4 w-full">
         <div className="md:p-4 w-full ">
+          <div className="">
+            <ScrollableButtonList
+              sendFilterCategory={filterFeed}
+              activeButtonId={filterValue}
+            />
+            {/* <p>{filterValue}</p> */}
+          </div>
           <div className="min-h-[400px] w-full">
             {isLoading ? (
               <p className="text-center">Loading posts...</p>

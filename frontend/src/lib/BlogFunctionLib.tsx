@@ -7,6 +7,13 @@ export type authorObject = {
   lastName: string;
 };
 
+type Tag = {
+  _id: string;
+  name: string;
+  slug: string;
+  category: string;
+};
+
 export type Blog = {
   _id: string;
   title: string;
@@ -17,9 +24,10 @@ export type Blog = {
   slug: string;
 
   likes: string[];
+  tags: Tag[];
   bookmarks: string[];
   author: authorObject;
-
+  wordCount: number;
   createdAt: string;
   readingTime: number;
   readCount: number;

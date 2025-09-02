@@ -13,6 +13,7 @@ import { Highlight } from "@tiptap/extension-highlight";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { Selection, Placeholder } from "@tiptap/extensions";
+import { CharacterCount } from "@tiptap/extension-character-count";
 
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap-ui-primitive/button";
@@ -82,7 +83,7 @@ interface SimpleEditorProps {
   onUpdate: (content: string) => void;
   // The initial content to load, useful for editing
   initialContent?: string;
-
+  onWordCountChange: (count: number) => void;
   onImageUpload?: (imageData: CloudinaryUploadResult) => void;
 }
 
@@ -198,6 +199,7 @@ export function SimpleEditor({
   onUpdate,
   initialContent,
   onImageUpload,
+  onWordCountChange,
 }: SimpleEditorProps) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
@@ -269,11 +271,13 @@ export function SimpleEditor({
           alert(`Upload failed: ${error.message}`);
         },
       }),
+      CharacterCount,
     ],
     content: initialContent ? JSON.parse(initialContent) : undefined,
     onUpdate: ({ editor }) => {
       const contentAsJsonString = JSON.stringify(editor.getJSON());
       onUpdate(contentAsJsonString);
+      onWordCountChange(editor.storage.characterCount.words());
     },
   });
 
@@ -286,7 +290,10 @@ export function SimpleEditor({
     if (!isMobile && mobileView !== "main") {
       setMobileView("main");
     }
-  }, [isMobile, mobileView]);
+    if (editor) {
+      onWordCountChange(editor.storage.characterCount.words());
+    }
+  }, [isMobile, mobileView, editor, onWordCountChange]);
 
   return (
     <div className="simple-editor-wrapper">
@@ -320,6 +327,11 @@ export function SimpleEditor({
           role="presentation"
           className="simple-editor-content"
         />
+        {editor && ( // Make sure the editor is initialized before trying to access its properties
+          <div className="editor-footer flex items-center justify-end gap-4 p-2 text-sm text-gray-500 border-t">
+            <span>{editor.storage.characterCount.words()} Words</span>
+          </div>
+        )}
       </EditorContext.Provider>
     </div>
   );

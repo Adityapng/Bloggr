@@ -122,3 +122,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+.textarea-collapsed {
+  height: 36px;
+}
+.textarea-expanded {
+  height: 128px;
+}
+.textarea-transition {
+  transition: height 300ms ease-in-out;
+}

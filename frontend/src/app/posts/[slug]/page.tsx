@@ -7,8 +7,9 @@ import { ApiResponse, handleLoggedInUserData } from "@/lib/api";
 import { Blog, blogParsedContent } from "@/lib/BlogFunctionLib";
 import { fetcher } from "@/lib/fetcher";
 import { Eye, Ellipsis } from "lucide-react";
-
+import { Badge } from "@/components/ui/badge";
 import { CommentCount, CommentSection } from "@/components/interaction/Comment";
+import Link from "next/link";
 
 interface PageProps {
   params: { [key: string]: string };
@@ -47,7 +48,19 @@ export default async function Page({ params }: PageProps) {
   );
 
   if (!postData) {
-    /* ... not found ... */
+    // It's good practice to show a user-friendly message.
+    return (
+      <div className="text-center py-20">
+        <h1 className="text-2xl font-bold">Post Not Found</h1>
+        <p>Sorry, we could not find the post you were looking for.</p>
+        <Link
+          href="/"
+          className="text-blue-500 hover:underline mt-4 inline-block"
+        >
+          Go back to the homepage
+        </Link>
+      </div>
+    );
   }
   const initialUserHasLiked = postData.likes.includes(
     currentUser?.user?._id ?? ""
@@ -57,22 +70,38 @@ export default async function Page({ params }: PageProps) {
     currentUser?.user?._id ?? ""
   );
 
-  // console.log(postData._id);
-  // console.log(postData.likeCount);
-  // console.log(initialUserHasLiked);
+  function formatCommentDate(createdAt: string | Date): string {
+    const date = new Date(createdAt);
+    const now = new Date();
 
-  const GetXDaysAgo: React.FC<{ date: string }> = ({ date }) => {
-    const getDaysAgo = (dateString: string) => {
-      const dateObj = new Date(dateString);
-      const now = new Date();
-      const diffTime = Math.abs(now.getTime() - dateObj.getTime());
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      if (diffDays === 0) return "Today";
-      if (diffDays === 1) return "1 day ago";
-      return `${diffDays} days ago`;
-    };
-    return <span>{getDaysAgo(date)}</span>;
-  };
+    const diffMs = now.getTime() - date.getTime();
+    const diffSeconds = Math.floor(diffMs / 1000);
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(
+      (now.setHours(0, 0, 0, 0) - date.setHours(0, 0, 0, 0)) /
+        (1000 * 60 * 60 * 24)
+    );
+
+    if (diffSeconds < 60) {
+      return `${diffSeconds} second${diffSeconds !== 1 ? "s" : ""} ago`;
+    }
+    if (diffMinutes < 60) {
+      return `${diffMinutes} minute${diffMinutes !== 1 ? "s" : ""} ago`;
+    }
+    if (diffHours < 24 && diffDays === 0) {
+      return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
+    }
+    if (diffDays === 1) {
+      return "Yesterday";
+    }
+
+    return new Date(createdAt).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
   const getInitials = (user: Blog): string => {
     if (!user) {
       return "GU";
@@ -118,6 +147,7 @@ export default async function Page({ params }: PageProps) {
       </div>
     );
   };
+  console.log(postData.readingTime);
 
   return (
     <div className=" w-full flex justify-center">
@@ -152,7 +182,7 @@ export default async function Page({ params }: PageProps) {
               </div>
               <div>
                 <p className=" text-sm">
-                  <GetXDaysAgo date={postData.createdAt} />{" "}
+                  {formatCommentDate(postData.createdAt)}
                 </p>
               </div>
             </div>
@@ -162,11 +192,33 @@ export default async function Page({ params }: PageProps) {
         <br />
         <div>{blogParsedContent(postData.content)}</div>
         <br />
+        <div className=" py-4">
+          <p className=" text-xl">Tags</p>
+        </div>
+        <div className=" flex flex-wrap gap-1">
+          {postData.tags &&
+            Array.isArray(postData.tags) &&
+            postData.tags.map((tag) => (
+              <div className="flex items-center" key={`${tag}-selected-tag`}>
+                <Badge asChild className=" py-1 px-2">
+                  <Link href={`/tags/${tag.slug}`} key={tag._id}>
+                    {tag.name}
+                  </Link>
+                </Badge>
+              </div>
+            ))}
+        </div>
+        <br />
         <div>
           <PostInteractions />
         </div>
-        <div>
-          <CommentSection count={postData.commentCount} />
+        <div className=" py-6">
+          <CommentSection
+            count={postData.commentCount}
+            postid={postData._id}
+            limit={5}
+            currentUser={currentUser}
+          />
         </div>
       </div>
     </div>
