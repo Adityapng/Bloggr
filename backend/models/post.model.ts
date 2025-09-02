@@ -15,9 +15,10 @@ export interface IPost extends Document {
   registeredReadersCount: number;
   likeCount: number;
   bookmarkCount: number;
+  wordCount: number;
   readCount: number;
   commentCount: number;
-  tags: string[];
+  tags: Types.ObjectId[];
   status: "draft" | "published";
   readingTime: number;
   createdAt: Date;
@@ -76,19 +77,29 @@ const postSchema = new Schema<IPost>(
         ref: "User",
       },
     ],
-
-    // commentCount: {
-    //   type: Number,
-    //   default: 0,
-    // },
-    tags: {
-      type: [String],
-      default: [],
-      set: (tags: string[]) => tags.map((tag) => tag.toLowerCase().trim()),
+    wordCount: {
+      type: Number,
+      default: 0,
     },
+
+    commentCount: {
+      type: Number,
+      default: 0,
+    },
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+        required: [true, "Minimum one tag is required."],
+      },
+    ],
     status: {
       type: String,
       enum: ["draft", "published"],
+    },
+    readingTime: {
+      type: Number,
+      default: 0,
     },
   },
   {
@@ -108,7 +119,7 @@ postSchema.pre<IPost>("save", function (next) {
 
   if (this.isModified("content") || this.isNew) {
     const wordsPerMinute = 200;
-    const wordCount = this.content.split(/\s+/).length;
+    const wordCount = this.wordCount;
     this.readingTime = Math.ceil(wordCount / wordsPerMinute);
   }
 
