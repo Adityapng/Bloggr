@@ -43,7 +43,7 @@ const handleUserSignup = async (req: Request, res: Response) => {
       expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
       path: "/",
     });
-    console.log(token, "from signup controller");
+    // console.log(token, "from signup controller");
 
     res.status(200).json({
       message: "Signin successful",

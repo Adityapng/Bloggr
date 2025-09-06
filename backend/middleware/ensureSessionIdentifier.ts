@@ -9,19 +9,19 @@ export const ensureSessionIdentifier = (
   const authToken = req.cookies.token;
   const anonToken = req.cookies.anon_user_token;
 
-  if (authToken || anonToken) {
-    console.log("auth ", authToken || "anon ", anonToken);
+  // if (authToken || anonToken) {
+  //   console.log("auth ", authToken || "anon ", anonToken);
 
-    return next();
-  }
-  console.log(" ");
-  console.log(" ");
-  console.log(anonToken);
-  console.log(" ");
-  console.log(" ");
+  //   return next();
+  // }
+  // console.log(" ");
+  // console.log(" ");
+  // console.log(anonToken);
+  // console.log(" ");
+  // console.log(" ");
 
   const anonymousId: string = uuidv4();
-  console.log("anon id generated from ensureSessionIdentifier");
+  // console.log("anon id generated from ensureSessionIdentifier");
 
   res.cookie("anon_user_token", anonymousId, {
     httpOnly: true,
@@ -32,9 +32,9 @@ export const ensureSessionIdentifier = (
   });
 
   req.cookies.anon_user_token = anonymousId;
-  console.log(
-    "anon id set to cookies in req object from ensureSessionIdentifier"
-  );
+  // console.log(
+  //   "anon id set to cookies in req object from ensureSessionIdentifier"
+  // );
 
   next();
 };

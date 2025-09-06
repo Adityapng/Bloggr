@@ -17,11 +17,13 @@ export const getAllPost = async (req: Request, res: Response) => {
       const tagsInCategory = await Tag.find({
         category: categoryFilter,
       }).select("_id");
+      // console.log(tagsInCategory, "tagsInCategory", categoryFilter);
 
       const tagIds = tagsInCategory.map((tag) => tag._id);
 
       if (tagIds.length > 0) {
         filterQuery.tags = { $in: tagIds };
+        // console.log(tagIds, "yghhhh");
       } else {
         filterQuery._id = null;
       }
@@ -37,6 +39,8 @@ export const getAllPost = async (req: Request, res: Response) => {
       .limit(perPage)
       .populate("author", "username firstName lastName avatarUrl")
       .populate("tags", "name slug category");
+
+    // console.log(posts);
 
     const totalPages = Math.ceil(totalPosts / perPage);
 

@@ -19,11 +19,11 @@ const decodeUserIfPresent = (
   const authToken = req.cookies?.token;
   const anonToken = req.cookies?.anon_user_token;
 
-  console.log(
-    `[Decode] AuthToken: ${authToken ? "Present" : "None"}, AnonToken: ${
-      anonToken || "None"
-    }`
-  );
+  // console.log(
+  //   `[Decode] AuthToken: ${authToken ? "Present" : "None"}, AnonToken: ${
+  //     anonToken || "None"
+  //   }`
+  // );
 
   if (authToken) {
     try {
@@ -33,16 +33,16 @@ const decodeUserIfPresent = (
       req.user = decoded;
       req.sessionId = decoded.userid;
 
-      console.log(`[Decode] Authenticated user found: ${decoded.userid}`);
+      // console.log(`[Decode] Authenticated user found: ${decoded.userid}`);
     } catch (error) {
       req.sessionId = anonToken;
-      console.log(
-        `[Decode] Invalid auth token. Falling back to anon session: ${anonToken}`
-      );
+      // console.log(
+      //   `[Decode] Invalid auth token. Falling back to anon session: ${anonToken}`
+      // );
     }
   } else {
     req.sessionId = anonToken;
-    console.log(`[Decode] Guest session found: ${anonToken}`);
+    // console.log(`[Decode] Guest session found: ${anonToken}`);
   }
 
   next();

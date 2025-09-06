@@ -8,10 +8,10 @@ const seedDatabase = async () => {
   try {
     // --- Setup and Connection ---
     dotenv.config({ path: path.resolve(__dirname, "../.env") });
-    console.log("Attempting to connect to MongoDB...");
+    // console.log("Attempting to connect to MongoDB...");
     if (!process.env.MONGO_URI) throw new Error("MONGODB_URI is not defined.");
     await mongoose.connect(process.env.MONGO_URI);
-    console.log("MongoDB Connected.");
+    // console.log("MongoDB Connected.");
 
     // --- Your blogTags object ---
     const blogTags = {
@@ -998,7 +998,7 @@ const seedDatabase = async () => {
     };
 
     // --- Data Preparation ---
-    console.log("Preparing tags for seeding...");
+    // console.log("Preparing tags for seeding...");
     const tagsToInsert = [];
     for (const [categoryKey, tagNames] of Object.entries(blogTags)) {
       if (Array.isArray(tagNames)) {
@@ -1015,21 +1015,21 @@ const seedDatabase = async () => {
         }
       }
     }
-    console.log(`Prepared ${tagsToInsert.length} total tags to insert.`);
+    // console.log(`Prepared ${tagsToInsert.length} total tags to insert.`);
 
     // --- Seeding ---
-    console.log("Deleting existing tags...");
+    // console.log("Deleting existing tags...");
     await Tag.deleteMany({});
-    console.log("Existing tags deleted.");
+    // console.log("Existing tags deleted.");
 
     if (tagsToInsert.length > 0) {
-      console.log("Seeding new tags with insertMany...");
+      // console.log("Seeding new tags with insertMany...");
       // ✅ USE insertMany. It's a single, efficient database operation.
       // The pre('save') hook is bypassed, which is why we generate the slug manually.
       await Tag.insertMany(tagsToInsert, { ordered: false }); // 'ordered: false' tries to insert all, even if some fail
-      console.log(`✅ Tags seeded successfully!`);
+      // console.log(`✅ Tags seeded successfully!`);
     } else {
-      console.log("No valid tags were found to seed.");
+      // console.log("No valid tags were found to seed.");
     }
   } catch (error) {
     // This will catch errors from connect, deleteMany, or insertMany
@@ -1037,7 +1037,7 @@ const seedDatabase = async () => {
   } finally {
     // This block will always run, ensuring the connection is closed.
     await mongoose.disconnect();
-    console.log("MongoDB Disconnected.");
+    // console.log("MongoDB Disconnected.");
   }
 };
 

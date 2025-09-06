@@ -22,7 +22,7 @@ const corsOptions = {
     "http://10.206.239.19:3000",
     /^http:\/\/10\.\d+\.\d+\.\d+:3000$/,
   ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };

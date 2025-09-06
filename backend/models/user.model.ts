@@ -1,18 +1,28 @@
-import mongoose, { Document, Model, Schema, CallbackError } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 
 export type UserRole = "user" | "admin" | "moderator" | "editor";
 
 export interface IUser extends Document {
-  username: string;
+  username: string; //
   email: string;
-  password?: string;
+  password?: string; //
   firstName: string;
   lastName: string;
   role: UserRole;
-  avatarURL?: string;
-  bio?: string;
-  fullName?: string;
+  avatarURL?: string; //
+  bio?: string; //
+  about: string; //
+  followers: Types.ObjectId[];
+  followerCount: number;
+  following: Types.ObjectId[];
+  followingCount: number;
+  instagramLink: string; //
+  twitterLink: string; //
+  externalLinks: string[]; //
+  totalReads: number;
+  profilePicturePublicID?: string;
+  fullName?: string; //
   createdAt: Date;
   updatedAt: Date;
 }
@@ -66,9 +76,48 @@ const userSchema: Schema = new Schema(
       type: String,
       default: "",
     },
+    totalReads: {
+      type: Number,
+      default: 0,
+    },
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    instagramLink: { type: String, maxlength: 100, default: "" },
+    twitterLink: { type: String, maxlength: 100, default: "" },
+
+    externalLinks: {
+      type: [String],
+      validate: {
+        validator: function (v: string[]) {
+          return v.length <= 5; // 👈 max 5 links
+        },
+        message: `You can store at most 5 links, but got `,
+      },
+      default: [],
+    },
+
     bio: {
       type: String,
       maxlength: 500,
+      default: "",
+    },
+    profilePicturePublicID: {
+      type: String,
+      default: "",
+    },
+    about: {
+      type: String,
+      maxlength: 1000,
       default: "",
     },
   },
@@ -86,12 +135,7 @@ const userSchema: Schema = new Schema(
     },
   }
 );
-
-userSchema.virtual("fullName").get(function (this: IUser): string {
-  return `${this.firstName} ${this.lastName}`;
-});
-
-userSchema.pre("save", function (next) {
+userSchema.pre<IUser>("save", function (next) {
   if (!this.isModified("password")) return next();
 
   bcrypt.hash(this.password as string, 14, (err, hash) => {
@@ -99,6 +143,24 @@ userSchema.pre("save", function (next) {
     this.password = hash;
     next();
   });
+});
+
+userSchema.pre<IUser>("save", function (next) {
+  if (this.externalLinks && this.externalLinks.length > 3) {
+    this.externalLinks = this.externalLinks.slice(0, 3); // only keep first 5
+  }
+  next();
+});
+
+userSchema.virtual("fullName").get(function (this: IUser): string {
+  return `${this.firstName} ${this.lastName}`;
+});
+
+userSchema.virtual("followerCount").get(function (this: IUser): number {
+  return this.followers ? this.followers.length : 0;
+});
+userSchema.virtual("followingCount").get(function (this: IUser): number {
+  return this.following ? this.following.length : 0;
 });
 
 const User = mongoose.model<IUser>("User", userSchema);
