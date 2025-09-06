@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, User, Mail, Lock, UserCheck } from "lucide-react";
-import { fetcher } from "@/lib/fetcher";
+import { apiFetcher } from "@/lib/apiFetcher";
 
 // --- Type Definitions ---
 interface FormData {
@@ -114,7 +114,7 @@ export default function SignupForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       };
-      const response = await fetcher(path, options);
+      const response = await apiFetcher(path, options);
 
       const data = await response.json();
 

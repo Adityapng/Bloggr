@@ -4,6 +4,7 @@ import { Noto_Sans } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+import { Theme } from "@radix-ui/themes";
 
 const notoSans = Noto_Sans({
   subsets: ["latin"],
@@ -47,9 +48,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${notoSans.className} antialiased bg-gray-50 dark:bg-[#121212]`}
-      >
+      <body className={`${notoSans.className} antialiased  dark:bg-[#121212]`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -59,7 +58,7 @@ export default async function RootLayout({
           <header className="md:px-10 px-5 py-5 sticky top-0 z-50 backdrop-blur-sm ">
             <Navbar user={navbarData.user} isLoggedIn={navbarData.isLoggedIn} />
           </header>{" "}
-          {children}
+          <Theme accentColor="gray">{children}</Theme>
         </ThemeProvider>
       </body>
     </html>

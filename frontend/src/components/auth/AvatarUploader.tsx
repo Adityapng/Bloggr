@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { fetcher } from "@/lib/fetcher";
+import { apiFetcher } from "@/lib/apiFetcher";
 
 interface AvatarUploaderProps {
   onUploadSuccess: (url: string) => void;
@@ -21,7 +21,7 @@ export default function AvatarUploader({
     // --- Step 1: Go to our backend (the manager) to get the permission slip ---
     const getSignature = async () => {
       const path = "/api/uploads/signature";
-      const response = await fetcher(path);
+      const response = await apiFetcher(path);
       return response.json();
     };
     const { timestamp, signature } = await getSignature();

@@ -1,6 +1,6 @@
 "use client";
 
-import { fetcher } from "@/lib/fetcher";
+import { apiFetcher } from "@/lib/apiFetcher";
 import { Heart } from "lucide-react";
 import { useState, useTransition } from "react";
 
@@ -28,7 +28,7 @@ export default function Like({
 
     startTransition(async () => {
       try {
-        const response = await fetcher(`/api/posts/${postId}/like`, {
+        const response = await apiFetcher(`/api/posts/${postId}/like`, {
           method: "POST",
         });
 

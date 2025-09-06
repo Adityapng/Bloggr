@@ -1,4 +1,4 @@
-export const fetcher = async (path: string, options: RequestInit = {}) => {
+export const apiFetcher = async (path: string, options: RequestInit = {}) => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const URL = `${apiUrl}${path}`;
 

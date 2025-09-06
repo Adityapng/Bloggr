@@ -33,13 +33,12 @@ export default function LogoutButton() {
 
   return (
     <Button
-      className=""
+      className="w-full flex px-2 py-1.5 items-center justify-start"
       variant="ghost"
       onClick={handleLogout}
       disabled={isLoading}
-      size="sm"
     >
-      <LogOut className="mr-2 h-4 w-4" />
+      <LogOut className="mr-1 h-4 w-4" />
       {isLoading ? "Logging out..." : "Logout"}
     </Button>
   );

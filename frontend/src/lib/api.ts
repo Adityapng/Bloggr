@@ -1,4 +1,4 @@
-import { fetcher } from "./fetcher";
+import { apiFetcher } from "./apiFetcher";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +22,7 @@ export interface ApiResponse {
 export async function handleLoggedInUserData(): Promise<ApiResponse | null> {
   try {
     const path = "/";
-    const response = await fetcher(path);
+    const response = await apiFetcher(path);
 
     if (!response.ok) {
       throw new Error(`API responded with status: ${response.status}`);

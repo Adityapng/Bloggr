@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ApiResponse, handleLoggedInUserData } from "@/lib/api";
 import { Blog, blogParsedContent } from "@/lib/BlogFunctionLib";
-import { fetcher } from "@/lib/fetcher";
+import { apiFetcher } from "@/lib/apiFetcher";
 import { Eye, Ellipsis } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CommentCount, CommentSection } from "@/components/interaction/Comment";
@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 
 async function getPostData(slug: string) {
   try {
-    const response = await fetcher(`/api/posts/${slug}`);
+    const response = await apiFetcher(`/api/posts/${slug}`);
     if (!response.ok) {
       console.error(
         "SERVER responded with an error:",

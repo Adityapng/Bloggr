@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tags, X } from "lucide-react";
 import { CloudinaryUploadResult } from "@/lib/cloudinaryUpload";
-import { fetcher } from "@/lib/fetcher";
+import { apiFetcher } from "@/lib/apiFetcher";
 
 export default function WritePage() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function WritePage() {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await fetcher("/api/tags");
+        const response = await apiFetcher("/api/tags");
         const data = await response.json();
         setAllCategorizedTags(data);
       } catch (error) {
@@ -108,7 +108,7 @@ export default function WritePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(postData),
       };
-      const response = await fetcher(path, options);
+      const response = await apiFetcher(path, options);
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Failed to create post.");

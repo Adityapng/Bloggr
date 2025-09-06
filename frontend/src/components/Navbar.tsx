@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { GoToCreatePost, GoToProfile, GoToSettings } from "./navButtons";
 import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
+import { User } from "lucide-react";
 
 interface User {
   username: string;

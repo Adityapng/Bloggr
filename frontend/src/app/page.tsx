@@ -20,7 +20,7 @@ import {
   getInitials,
   GetXDaysAgo,
 } from "@/lib/BlogFunctionLib";
-import { fetcher } from "@/lib/fetcher";
+import { apiFetcher } from "@/lib/apiFetcher";
 import { ScrollableButtonList } from "@/components/feedFilter/FeedFilter";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +36,7 @@ export default function HomePage() {
     const fetchPosts = async () => {
       setIsLoading(true);
       try {
-        const response = await fetcher(
+        const response = await apiFetcher(
           `/api/posts?page=${currentPage}&filter=${filterValue}`
         );
 
@@ -138,8 +138,8 @@ export default function HomePage() {
   //TODO add conditional filtering option to filter posts in feed
   return (
     <div className="min-h-screen w-full flex justify-center">
-      <div className=" h-screen xl:w-1/4 lg:w-1/5  w-0 hidden md:block"></div>
-      <div className=" h-screen xl:w-1/2 lg:w-3/5 p-4 w-full">
+      <div className="  xl:w-1/4 lg:w-1/5  w-0 hidden md:block"></div>
+      <div className="  xl:w-1/2 lg:w-3/5 p-4 w-full">
         <div className="md:p-4 w-full ">
           <div className="">
             <ScrollableButtonList
@@ -160,20 +160,25 @@ export default function HomePage() {
                       className=" w-full  sm:p-4 hover:bg-gray-50/5 rounded-3xl min-h-44 gap-2 md:gap-10"
                     >
                       <div className="w-full flex flex-col">
-                        <div className=" flex items-center gap-2 pb-3">
-                          <Avatar className=" size-7 ">
-                            <AvatarImage
-                              className=" select-none"
-                              src={data.author.authorAvatar}
-                            />
-                            <AvatarFallback className=" bg-amber-300 text-xs">
-                              {getInitials(data)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <p className=" text-sm" key={data.author.username}>
-                            {data.author.username}
-                          </p>
-                        </div>
+                        <Link
+                          href={`/user/${data.author.username}`}
+                          key={data.author.username}
+                        >
+                          <div className=" flex items-center gap-2 pb-3">
+                            <Avatar className=" size-7 ">
+                              <AvatarImage
+                                className=" select-none"
+                                src={data.author.authorAvatar}
+                              />
+                              <AvatarFallback className=" bg-amber-300 text-xs">
+                                {getInitials(data)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <p className=" text-sm" key={data.author.username}>
+                              {data.author.username}
+                            </p>
+                          </div>
+                        </Link>
                         <Link href={`/posts/${data.slug}`} key={data._id}>
                           <div className=" w-full flex gap-5 h-full">
                             <div className=" lg:w-3/4 md:w-2/3 w-full ">
@@ -267,7 +272,7 @@ export default function HomePage() {
         </div>
         <div className=" w-full flex flex-col gap-4"></div>
       </div>
-      <div className=" h-screen xl:w-1/4 lg:w-1/5  w-0 hidden md:block"></div>
+      <div className="  xl:w-1/4 lg:w-1/5  w-0 hidden md:block"></div>
     </div>
   );
 }

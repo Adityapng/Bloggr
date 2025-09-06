@@ -2,7 +2,7 @@
 
 import { Heart, MessageCircle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { fetcher } from "@/lib/fetcher";
+import { apiFetcher } from "@/lib/apiFetcher";
 import React, { useEffect, useState, useTransition } from "react";
 import { Button } from "../ui/button";
 import { ApiResponse } from "@/lib/api";
@@ -72,7 +72,7 @@ function Like({ commentId, initialLikeCount, initialUserHasLiked }: LikeProps) {
         const options = {
           method: "POST",
         };
-        const response = await fetcher(path, options);
+        const response = await apiFetcher(path, options);
 
         if (!response.ok) {
           setUserHasLiked(initialUserHasLiked);
@@ -228,7 +228,7 @@ export function CommentSection({
     async function getCommentsData() {
       setIsFetching(true);
       try {
-        const response = await fetcher(
+        const response = await apiFetcher(
           `/api/posts/comment/${postid}/?limit=${limit}`
         );
         if (!response.ok) {
@@ -269,7 +269,7 @@ export function CommentSection({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: comment }),
       };
-      const response = await fetcher(path, options);
+      const response = await apiFetcher(path, options);
       const data = await response.json();
 
       if (!response.ok) {

@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "../styles/_variables.scss";
 @import "../styles/_keyframe-animations.scss";
+@import "@radix-ui/themes/styles.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -89,9 +90,9 @@
   --popover-foreground: oklch(0.985 0.002 247.839);
   --primary: oklch(0.928 0.006 264.531);
   --primary-foreground: oklch(0.21 0.034 264.665);
-  --secondary: oklch(0.278 0.033 256.848);
+  --secondary: oklch(26.448% 0.00003 271.152);
   --secondary-foreground: oklch(0.985 0.002 247.839);
-  --muted: oklch(0.278 0.033 256.848);
+  --muted: oklch(98.5% 0 0);
   --muted-foreground: oklch(0.707 0.022 261.325);
   --accent: #222121;
   --accent-foreground: oklch(0.985 0.002 247.839);

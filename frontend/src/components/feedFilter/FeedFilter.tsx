@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { fetcher } from "@/lib/fetcher";
+import { apiFetcher } from "@/lib/apiFetcher";
 
 interface ScrollableButtonListProps {
   buttons?: string[];
@@ -76,7 +76,7 @@ export const ScrollableButtonList: React.FC<ScrollableButtonListProps> = ({
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await fetcher("/api/tags");
+        const response = await apiFetcher("/api/tags");
         const data = await response.json();
         setAllCategorizedTags(data);
       } catch (error) {

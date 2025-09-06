@@ -1,51 +1,40 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { User, Settings, SquarePen } from "lucide-react";
+import Link from "next/link";
 
 export function GoToProfile() {
-  const router = useRouter();
-
-  const getProfile = () => {
-    router.push("/");
-  };
+  // const getProfile = () => {
+  //   console.log("clicked");
+  // };
   return (
-    <Button className="" variant="ghost" onClick={getProfile} size="sm">
-      <User className="mr-2 h-4 w-4" />
+    <Link href={`/user/me`} className=" w-full flex px-2.5 py-1.5 items-center">
+      <User className="mr-3.5 h-4 w-4" />
       Account
-    </Button>
+    </Link>
   );
 }
 
 export function GoToSettings() {
-  const router = useRouter();
-
-  const getSettings = () => {
-    router.push("/");
-  };
   return (
-    <Button className="" variant="ghost" onClick={getSettings} size="sm">
-      <Settings className="mr-2 h-4 w-4" />
+    <Link
+      href={`/settings`}
+      className=" w-full flex px-2.5 py-1.5 items-center"
+    >
+      <Settings className="mr-3.5 h-4 w-4" />
       Settings
-    </Button>
+    </Link>
   );
 }
 
 export function GoToCreatePost() {
-  const router = useRouter();
+  // const router = useRouter();
 
-  const getCreatePost = () => {
-    router.push("/write");
-  };
+  // const getCreatePost = () => {
+  //   router.push("/write");
+  // };
   return (
-    <Button
-      className=" dark:bg-transparent dark:text-white border dark:border-zinc-600 border-zinc-200 bg-white text-black"
-      onClick={getCreatePost}
-      size="sm"
-    >
+    <Link href={`/write`} className=" w-full flex px-2.5 py-1.5 items-center">
       <SquarePen />
       <span>Write</span>
-    </Button>
+    </Link>
   );
 }

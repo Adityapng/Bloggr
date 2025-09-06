@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { fetcher } from "@/lib/fetcher";
+import { apiFetcher } from "@/lib/apiFetcher";
 import { Bookmark as BookmarkIcon } from "lucide-react";
 
 interface BookmarkProps {
@@ -25,7 +25,7 @@ export default function Bookmark({
 
     startTransition(async () => {
       try {
-        const response = await fetcher(`/api/posts/${postId}/bookmark`, {
+        const response = await apiFetcher(`/api/posts/${postId}/bookmark`, {
           method: "POST",
         });
 
