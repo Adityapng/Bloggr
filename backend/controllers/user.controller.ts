@@ -69,7 +69,7 @@ const getUserProfile = async (req: Request, res: Response) => {
     const results = await Post.aggregate([
       {
         $match: {
-          author: requestedUserId,
+          author: requestedUserId?._id,
         },
       },
       {
@@ -79,7 +79,7 @@ const getUserProfile = async (req: Request, res: Response) => {
         },
       },
     ]);
-
+    console.log(requestedUserId, "results found");
     const TotalReads = results[0]?.totalReads || 0;
 
     const userdata = await User.findOneAndUpdate(
