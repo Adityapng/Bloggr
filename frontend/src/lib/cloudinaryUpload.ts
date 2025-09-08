@@ -1,3 +1,4 @@
+// import { notFound } from "next/navigation";
 import { apiFetcher } from "./apiFetcher";
 import { MAX_FILE_SIZE } from "./tiptap-utils";
 
@@ -30,7 +31,9 @@ const getCloudinarySignature = async (folder: string) => {
   try {
     const path = `/api/uploads/signature?folder=${folder}`;
     const response = await apiFetcher(path);
-
+    // if (response.status === 404) {
+    //   notFound(); // This will immediately stop rendering and show the 404 page
+    // }
     if (!response.ok) {
       throw new Error("Failed to get a signature from the server.");
     }

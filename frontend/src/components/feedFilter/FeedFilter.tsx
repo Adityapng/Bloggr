@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { apiFetcher } from "@/lib/apiFetcher";
+// import { notFound } from "next/navigation";
 
 interface ScrollableButtonListProps {
   buttons?: string[];
@@ -77,6 +78,9 @@ export const ScrollableButtonList: React.FC<ScrollableButtonListProps> = ({
     const fetchTags = async () => {
       try {
         const response = await apiFetcher("/api/tags");
+        // if (response.status === 404) {
+        //   notFound(); // This will immediately stop rendering and show the 404 page
+        // }
         const data = await response.json();
         setAllCategorizedTags(data);
       } catch (error) {
@@ -107,7 +111,7 @@ export const ScrollableButtonList: React.FC<ScrollableButtonListProps> = ({
             {canScrollLeft && (
               <button
                 onClick={scrollLeft}
-                className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-white dark:bg-zinc-900 shadow-lg rounded-full p-4 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all duration-200 border dark:border-zinc-600"
+                className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-white dark:bg-zinc-900 shadow-lg rounded-full p-2 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all duration-200 border dark:border-zinc-600"
                 aria-label="Scroll left"
                 type="button"
                 style={{ marginLeft: "4px" }}

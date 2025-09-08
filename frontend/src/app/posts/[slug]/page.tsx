@@ -10,6 +10,7 @@ import { Eye, Ellipsis } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CommentCount, CommentSection } from "@/components/interaction/Comment";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface PageProps {
   params: { [key: string]: string };
@@ -20,6 +21,9 @@ export const dynamic = "force-dynamic";
 async function getPostData(slug: string) {
   try {
     const response = await apiFetcher(`/api/posts/${slug}`);
+    if (response.status === 404) {
+      return null; // This will immediately stop rendering and show the 404 page
+    }
     if (!response.ok) {
       console.error(
         "SERVER responded with an error:",
@@ -49,18 +53,7 @@ export default async function Page({ params }: PageProps) {
 
   if (!postData) {
     // It's good practice to show a user-friendly message.
-    return (
-      <div className="text-center py-20">
-        <h1 className="text-2xl font-bold">Post Not Found</h1>
-        <p>Sorry, we could not find the post you were looking for.</p>
-        <Link
-          href="/"
-          className="text-blue-500 hover:underline mt-4 inline-block"
-        >
-          Go back to the homepage
-        </Link>
-      </div>
-    );
+    notFound();
   }
   const initialUserHasLiked = postData.likes.includes(
     currentUser?.user?._id ?? ""

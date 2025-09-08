@@ -22,6 +22,7 @@ import {
 } from "@/lib/BlogFunctionLib";
 import { apiFetcher } from "@/lib/apiFetcher";
 import { ScrollableButtonList } from "@/components/feedFilter/FeedFilter";
+import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,9 @@ export default function HomePage() {
         const response = await apiFetcher(
           `/api/posts?page=${currentPage}&filter=${filterValue}`
         );
+        if (response.status === 404) {
+          return null;
+        }
 
         if (!response.ok) {
           console.error(
@@ -49,7 +53,7 @@ export default function HomePage() {
         }
 
         const dataResponse = await response.json();
-        setPosts(dataResponse.posts || []);
+        setPosts(dataResponse.posts || null);
         setTotalPages(dataResponse.totalPages || 1);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
@@ -153,83 +157,88 @@ export default function HomePage() {
               <p className="text-center">Loading posts...</p>
             ) : (
               <div className="space-y-10 w-full flex flex-col items-center">
-                {posts.map((data) => {
-                  return (
-                    <div
-                      key={data._id}
-                      className=" w-full  sm:p-4 hover:bg-gray-50/5 rounded-3xl min-h-44 gap-2 md:gap-10"
-                    >
-                      <div className="w-full flex flex-col">
-                        <Link
-                          href={`/user/${data.author.username}`}
-                          key={data.author.username}
+                {posts
+                  ? posts.map((data) => {
+                      return (
+                        <div
+                          key={data._id}
+                          className=" w-full  sm:p-4 hover:bg-gray-50/5 rounded-3xl min-h-44 gap-2 md:gap-10"
                         >
-                          <div className=" flex items-center gap-2 pb-3">
-                            <Avatar className=" size-7 ">
-                              <AvatarImage
-                                className=" select-none"
-                                src={data.author.authorAvatar}
-                              />
-                              <AvatarFallback className=" bg-amber-300 text-xs">
-                                {getInitials(data)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <p className=" text-sm" key={data.author.username}>
-                              {data.author.username}
-                            </p>
-                          </div>
-                        </Link>
-                        <Link href={`/posts/${data.slug}`} key={data._id}>
-                          <div className=" w-full flex gap-5 h-full">
-                            <div className=" lg:w-3/4 md:w-2/3 w-full ">
-                              <div className="">
-                                <p className=" sm:text-xl text-lg font-bold ">
-                                  {data.title}
+                          <div className="w-full flex flex-col">
+                            <Link
+                              href={`/user/${data.author.username}`}
+                              key={data.author.username}
+                            >
+                              <div className=" flex items-center gap-2 pb-3">
+                                <Avatar className=" size-7 ">
+                                  <AvatarImage
+                                    className=" select-none"
+                                    src={data.author.authorAvatar}
+                                  />
+                                  <AvatarFallback className=" bg-amber-300 text-xs">
+                                    {getInitials(data)}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <p
+                                  className=" text-sm"
+                                  key={data.author.username}
+                                >
+                                  {data.author.username}
                                 </p>
                               </div>
-                              <div className="">
-                                <p className=" line-clamp-3 sm:text-md text-sm text-muted">
-                                  {blogParsedContent(data.content)}
+                            </Link>
+                            <Link href={`/posts/${data.slug}`} key={data._id}>
+                              <div className=" w-full flex gap-5 h-full">
+                                <div className=" lg:w-3/4 md:w-2/3 w-full ">
+                                  <div className="">
+                                    <p className=" sm:text-xl text-lg font-bold ">
+                                      {data.title}
+                                    </p>
+                                  </div>
+                                  <div className="">
+                                    <p className=" line-clamp-3 sm:text-md text-sm text-muted">
+                                      {blogParsedContent(data.content)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className=" lg:w-1/4 md:w-1/3 w-full sm:h-full h-2/3 contain-content aspect-[4/3] rounded-3xl">
+                                  <Image
+                                    alt="ddd"
+                                    src={data.coverImage}
+                                    fill
+                                    priority
+                                    style={{ objectFit: "cover" }}
+                                  />
+                                </div>
+                              </div>
+                            </Link>
+                            <div className=" flex justify-between pt-4 ">
+                              <div className=" flex gap-4 text-xs items-center">
+                                <p key={data.createdAt}>
+                                  <GetXDaysAgo date={data.createdAt} />{" "}
                                 </p>
+
+                                <span className=" flex gap-2 items-center">
+                                  <Heart className=" size-5" />{" "}
+                                  <span>{data.likeCount}</span>
+                                </span>
+
+                                <span className="flex gap-2 items-center ">
+                                  <MessageCircle className=" size-5" />{" "}
+                                  <span>{data.commentCount}</span>
+                                </span>
+                              </div>
+                              <div>
+                                <button className=" cursor-pointer">
+                                  <BookmarkPlus className=" size-5" />
+                                </button>
                               </div>
                             </div>
-                            <div className=" lg:w-1/4 md:w-1/3 w-full sm:h-full h-2/3 contain-content aspect-[4/3] rounded-3xl">
-                              <Image
-                                alt="ddd"
-                                src={data.coverImage}
-                                fill
-                                priority
-                                style={{ objectFit: "cover" }}
-                              />
-                            </div>
-                          </div>
-                        </Link>
-                        <div className=" flex justify-between pt-4 ">
-                          <div className=" flex gap-4 text-xs items-center">
-                            <p key={data.createdAt}>
-                              <GetXDaysAgo date={data.createdAt} />{" "}
-                            </p>
-
-                            <span className=" flex gap-2 items-center">
-                              <Heart className=" size-5" />{" "}
-                              <span>{data.likeCount}</span>
-                            </span>
-
-                            <span className="flex gap-2 items-center ">
-                              <MessageCircle className=" size-5" />{" "}
-                              <span>{data.commentCount}</span>
-                            </span>
-                          </div>
-                          <div>
-                            <button className=" cursor-pointer">
-                              <BookmarkPlus className=" size-5" />
-                            </button>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                      );
+                    })
+                  : notFound()}
               </div>
             )}
           </div>

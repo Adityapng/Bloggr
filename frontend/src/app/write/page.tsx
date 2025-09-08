@@ -33,6 +33,9 @@ export default function WritePage() {
     const fetchTags = async () => {
       try {
         const response = await apiFetcher("/api/tags");
+        // if (response.status === 404) {
+        //   notFound(); // This will immediately stop rendering and show the 404 page
+        // }
         const data = await response.json();
         setAllCategorizedTags(data);
       } catch (error) {
@@ -109,7 +112,9 @@ export default function WritePage() {
         body: JSON.stringify(postData),
       };
       const response = await apiFetcher(path, options);
-
+      if (response.status === 404) {
+        return null;
+      }
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Failed to create post.");
 

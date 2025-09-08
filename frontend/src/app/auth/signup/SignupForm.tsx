@@ -115,6 +115,9 @@ export default function SignupForm() {
         body: JSON.stringify(formData),
       };
       const response = await apiFetcher(path, options);
+      // if (response.status === 404) {
+      //   notFound(); // This will immediately stop rendering and show the 404 page
+      // }
 
       const data = await response.json();
 

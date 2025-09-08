@@ -23,6 +23,9 @@ interface UserPostFeedProps {
 export function UserPost({ userid }: UserPostFeedProps) {
   const swrFetcher = async (path: string) => {
     const response = await apiFetcher(path);
+    if (response.status === 404) {
+      return null; // This will immediately stop rendering and show the 404 page
+    }
 
     if (!response.ok) {
       const errorInfo = await response
@@ -140,6 +143,9 @@ export function UserPost({ userid }: UserPostFeedProps) {
 export function UserBookmarkedPost() {
   const swrFetcher = async (path: string) => {
     const response = await apiFetcher(path);
+    if (response.status === 404) {
+      return null; // This will immediately stop rendering and show the 404 page
+    }
 
     if (!response.ok) {
       const errorInfo = await response
@@ -257,6 +263,9 @@ export function UserBookmarkedPost() {
 export function UserLikedPost() {
   const swrFetcher = async (path: string) => {
     const response = await apiFetcher(path);
+    if (response.status === 404) {
+      return null; // This will immediately stop rendering and show the 404 page
+    }
 
     if (!response.ok) {
       const errorInfo = await response

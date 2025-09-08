@@ -61,21 +61,21 @@ export interface FetchedData {
 }
 
 const mockdata = {
-  _id: "dsd23133",
-  username: "mockid",
-  avatarURL: "string",
-  bio: "Mock Bio",
-  fullName: "Mock Data",
-  firstName: "Mock",
-  lastName: "Data",
-  followerCount: 12,
-  followingCount: 34,
-  totalReads: 56,
-  instagramLink: "string",
-  twitterLink: "string",
-  externalLinks: ["string"],
-  about: "bhsbchcbhsbhcbhs",
-  profilePicturePublicID: "jkjskwjskwjskwsjkwsjwksjwksjwksj",
+  _id: "65fa8def91348f349619b563",
+  username: "johndoe",
+  avatarURL: "https://example.com/avatars/johndoe.jpg",
+  bio: "Developer and open source enthusiast.",
+  fullName: "John Doe",
+  firstName: "John",
+  lastName: "Doe",
+  followerCount: 150,
+  followingCount: 75,
+  totalReads: 1200,
+  instagramLink: "https://instagram.com/johndoe",
+  twitterLink: "https://twitter.com/johndoe",
+  externalLinks: ["https://github.com/johndoe", "https://johndoe.com"],
+  about: "Building web apps with MongoDB for fun and impact.",
+  profilePicturePublicID: "profilepic_65fa8def91348f349619b563",
 };
 
 const getInitials = (user: FetchedData): string => {
@@ -87,10 +87,13 @@ const getInitials = (user: FetchedData): string => {
   return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
 };
 
-const fetchUserProfileData = async (): Promise<FetchedData> => {
+const fetchUserProfileData = async (): Promise<FetchedData | null> => {
   const path = `/api/users/me`;
   try {
     const response = await apiFetcher(path);
+    if (response.status === 404) {
+      return null;
+    }
     if (!response.ok) {
       console.error(
         "SERVER responded with an error:",
@@ -152,6 +155,7 @@ const Page = async () => {
     fetchedUserData.externalLinks?.filter(Boolean) || [];
   const hasOneLink = validExternalLinks.length === 1;
   const hasMultipleLinks = validExternalLinks.length > 1;
+
   function Instagram({ iglink }: IGLinkProps) {
     return (
       <Button asChild className="rounded-full flex items-center gap-2">
@@ -171,6 +175,7 @@ const Page = async () => {
       </Button>
     );
   }
+
   function Twitter({ twlink }: TWLinkProps) {
     return (
       <Button asChild className=" rounded-full flex gap2">
@@ -327,7 +332,7 @@ const Page = async () => {
           </div>
         </div>
         <div className=" w-full mt-10">
-          <Tabs.Root defaultValue="account">
+          <Tabs.Root defaultValue="posts">
             <Tabs.List>
               <Tabs.Trigger value="posts">Posts</Tabs.Trigger>
               <Tabs.Trigger value="liked">Liked posts</Tabs.Trigger>

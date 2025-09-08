@@ -185,7 +185,7 @@ const EditProfile = ({ userdata }: EditProfileProps) => {
     handleInputChange("profilePicturePublicID", imageData.public_id);
   };
 
-  const handleSubmit = async (e: FormEvent): Promise<boolean> => {
+  const handleSubmit = async (e: FormEvent): Promise<boolean | null> => {
     e.preventDefault();
 
     setIsLoading(true);
@@ -203,6 +203,9 @@ const EditProfile = ({ userdata }: EditProfileProps) => {
         body: JSON.stringify(dataToSend),
       };
       const response = await apiFetcher(path, options);
+      if (response.status === 404) {
+        return null; // This will immediately stop rendering and show the 404 page
+      }
 
       if (response.ok) {
         router.refresh();
@@ -223,7 +226,7 @@ const EditProfile = ({ userdata }: EditProfileProps) => {
     }
   };
 
-  const handleDeleteAvatar = async (e: FormEvent): Promise<boolean> => {
+  const handleDeleteAvatar = async (e: FormEvent): Promise<boolean | null> => {
     e.preventDefault();
 
     setIsLoading(true);
@@ -240,6 +243,9 @@ const EditProfile = ({ userdata }: EditProfileProps) => {
         // body: JSON.stringify(dataToSend),
       };
       const response = await apiFetcher(path, options);
+      if (response.status === 404) {
+        return null; // This will immediately stop rendering and show the 404 page
+      }
 
       if (response.ok) {
         // await new Promise((resolve) => setTimeout(resolve, 500));

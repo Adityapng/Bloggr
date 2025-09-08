@@ -59,12 +59,6 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem className=" md:hidden">
-              <Button variant="ghost">Categories</Button>
-            </DropdownMenuItem>
-            <DropdownMenuItem className=" md:hidden">
-              <Button variant="ghost">Authors</Button>{" "}
-            </DropdownMenuItem>
             <DropdownMenuItem>
               <GoToProfile />
             </DropdownMenuItem>
@@ -117,14 +111,8 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
             <span className="inline text-xl font-semibold">Bloggr</span>
           </Link>
           <div className=" flex gap-4">
-            <Button variant="ghost" className=" md:block hidden">
-              Home
-            </Button>
-            <Button variant="ghost" className=" md:block hidden">
-              Categories
-            </Button>
-            <Button variant="ghost" className=" md:block hidden">
-              Authors
+            <Button variant="ghost" className=" md:block hidden" asChild>
+              <Link href="/">Home</Link>
             </Button>
             <Input
               placeholder="Search"

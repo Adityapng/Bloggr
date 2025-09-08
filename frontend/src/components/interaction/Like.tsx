@@ -2,6 +2,7 @@
 
 import { apiFetcher } from "@/lib/apiFetcher";
 import { Heart } from "lucide-react";
+// import { notFound } from "next/navigation";
 import { useState, useTransition } from "react";
 
 interface LikeProps {
@@ -31,6 +32,10 @@ export default function Like({
         const response = await apiFetcher(`/api/posts/${postId}/like`, {
           method: "POST",
         });
+
+        // if (response.status === 404) {
+        //   notFound(); // This will immediately stop rendering and show the 404 page
+        // }
 
         if (!response.ok) {
           setUserHasLiked(initialUserHasLiked);

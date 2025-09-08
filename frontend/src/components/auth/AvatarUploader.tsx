@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { apiFetcher } from "@/lib/apiFetcher";
+// import { notFound } from "next/navigation";
 
 interface AvatarUploaderProps {
   onUploadSuccess: (url: string) => void;
@@ -22,6 +23,9 @@ export default function AvatarUploader({
     const getSignature = async () => {
       const path = "/api/uploads/signature";
       const response = await apiFetcher(path);
+      // if (response.status === 404) {
+      //   notFound(); // This will immediately stop rendering and show the 404 page
+      // }
       return response.json();
     };
     const { timestamp, signature } = await getSignature();

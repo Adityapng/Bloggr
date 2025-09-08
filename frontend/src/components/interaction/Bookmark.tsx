@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { apiFetcher } from "@/lib/apiFetcher";
 import { Bookmark as BookmarkIcon } from "lucide-react";
+// import { notFound } from "next/navigation";
 
 interface BookmarkProps {
   postId: string;
@@ -28,6 +29,9 @@ export default function Bookmark({
         const response = await apiFetcher(`/api/posts/${postId}/bookmark`, {
           method: "POST",
         });
+        // if (response.status === 404) {
+        //   notFound(); // This will immediately stop rendering and show the 404 page
+        // }
 
         const data = await response.json();
 

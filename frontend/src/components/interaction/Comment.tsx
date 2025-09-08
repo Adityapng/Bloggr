@@ -9,6 +9,7 @@ import { ApiResponse } from "@/lib/api";
 import { Textarea } from "../ui/textarea";
 import { cn } from "@/lib/utils";
 import EmojiPopover from "./EmojiPopover";
+// import { notFound } from "next/navigation";
 
 interface CommentCountProps {
   count: number;
@@ -73,7 +74,9 @@ function Like({ commentId, initialLikeCount, initialUserHasLiked }: LikeProps) {
           method: "POST",
         };
         const response = await apiFetcher(path, options);
-
+        // if (response.status === 404) {
+        //   notFound(); // This will immediately stop rendering and show the 404 page
+        // }
         if (!response.ok) {
           setUserHasLiked(initialUserHasLiked);
           setLikeCount(initialLikeCount);
@@ -231,6 +234,9 @@ export function CommentSection({
         const response = await apiFetcher(
           `/api/posts/comment/${postid}/?limit=${limit}`
         );
+        // if (response.status === 404) {
+        //   notFound(); // This will immediately stop rendering and show the 404 page
+        // }
         if (!response.ok) {
           console.error("Failed to fetch comments:", await response.text());
           setFetchedCommentData([]);
@@ -270,6 +276,9 @@ export function CommentSection({
         body: JSON.stringify({ content: comment }),
       };
       const response = await apiFetcher(path, options);
+      // if (response.status === 404) {
+      //   notFound(); // This will immediately stop rendering and show the 404 page
+      // }
       const data = await response.json();
 
       if (!response.ok) {

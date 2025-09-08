@@ -7,13 +7,33 @@ import Link from "next/link";
 // import Image from "next/image";
 
 import { cn } from "@/lib/utils";
-import UserPost from "./FetchPost";
+import { UserPost } from "./FetchPost";
 import { Box, Tabs, Text } from "@radix-ui/themes";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Link2 } from "lucide-react";
 
 interface ReadMoreProps {
   children: string;
   maxLength?: number;
   className?: string;
+}
+
+interface IGLinkProps {
+  iglink: string;
+}
+interface TWLinkProps {
+  twlink: string;
+}
+
+interface ExternalLinkProp {
+  externalLink: string;
 }
 
 interface PageProps {
@@ -24,6 +44,7 @@ interface FetchedData {
   _id: string;
   username: string;
   avatarURL: string;
+  profilePicturePublicID: string;
   bio: string;
   fullName: string;
   firstName: string;
@@ -33,26 +54,27 @@ interface FetchedData {
   totalReads: number;
   instagramLink: string;
   twitterLink: string;
-  userDefinedLink: string;
+  externalLinks: string[];
   about: string;
 }
 
-const mockdata = {
-  _id: "dsd23133",
-  username: "ABCD",
-  avatarURL: "string",
-  bio: "string",
-  fullName: "string",
-  firstName: "string",
-  lastName: "string",
-  followerCount: 22,
-  followingCount: 22,
-  totalReads: 22,
-  instagramLink: "string",
-  twitterLink: "string",
-  userDefinedLink: "string",
-  about: "bhsbchcbhsbhcbhs",
-};
+// const mockdata = {
+//   _id: "65fa8def91348f349619b563",
+//   username: "johndoe",
+//   avatarURL: "",
+//   bio: "Developer and open source enthusiast.",
+//   fullName: "John Doe",
+//   firstName: "John",
+//   lastName: "Doe",
+//   followerCount: 150,
+//   followingCount: 75,
+//   totalReads: 1200,
+//   instagramLink: "https://instagram.com/johndoe",
+//   twitterLink: "https://twitter.com/johndoe",
+//   externalLinks: ["https://github.com/johndoe", "https://johndoe.com"],
+//   about: "Building web apps with MongoDB for fun and impact.",
+//   profilePicturePublicID: "profilepic_65fa8def91348f349619b563",
+// };
 
 const getInitials = (user: FetchedData): string => {
   if (!user) {
@@ -63,10 +85,19 @@ const getInitials = (user: FetchedData): string => {
   return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
 };
 
-const fetchUserProfileData = async (username: string): Promise<FetchedData> => {
+const fetchUserProfileData = async (
+  username: string
+): Promise<FetchedData | null> => {
   const path = `/api/users/profile/${username}`;
   try {
     const response = await apiFetcher(path);
+    console.log(response);
+    console.log(response.status);
+
+    if (response.status === 404) {
+      // notFound(); // This will immediately stop rendering and show the 404 page
+      return null;
+    }
     if (!response.ok) {
       console.error(
         "SERVER responded with an error:",
@@ -83,7 +114,7 @@ const fetchUserProfileData = async (username: string): Promise<FetchedData> => {
     return response.json();
   } catch (error) {
     console.error("Error fetching post data:", error);
-    return mockdata;
+    return null;
   }
 };
 
@@ -125,10 +156,16 @@ const Page = async ({ params }: PageProps) => {
   if (!fetchedUserData) {
     notFound();
   }
-  function Instagram() {
+
+  const validExternalLinks =
+    fetchedUserData.externalLinks?.filter(Boolean) || [];
+  const hasOneLink = validExternalLinks.length === 1;
+  const hasMultipleLinks = validExternalLinks.length > 1;
+
+  function Instagram({ iglink }: IGLinkProps) {
     return (
       <Button asChild className="rounded-full flex items-center gap-2">
-        <Link href="https://www.anthropic.com/claude-code" target="_blank">
+        <Link href={iglink} target="_blank">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -144,10 +181,11 @@ const Page = async ({ params }: PageProps) => {
       </Button>
     );
   }
-  function Twitter() {
+
+  function Twitter({ twlink }: TWLinkProps) {
     return (
       <Button asChild className=" rounded-full flex gap2">
-        <Link href="https://www.anthropic.com/claude-code" target="_blank">
+        <Link href={twlink} target="_blank">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -164,81 +202,154 @@ const Page = async ({ params }: PageProps) => {
     );
   }
 
+  function extractDomainName(link: string): string | null {
+    if (!link || typeof link !== "string" || !link.startsWith("http")) {
+      return "Invalid Link"; // Return a user-friendly string
+    }
+    try {
+      const url = new URL(link);
+      const hostname = url.hostname; // e.g., "www.example.com"
+      const parts = hostname.split(".");
+
+      // Handle cases like "example.com", "www.example.com", "sub.domain.example.com"
+      if (parts.length >= 2) {
+        return parts[parts.length - 2]; // "example"
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Invalid URL:", error);
+      return null;
+    }
+  }
+
+  function ExternalLink({ externalLink }: ExternalLinkProp) {
+    return (
+      <Link
+        href={externalLink}
+        target="_blank"
+        // className=" justify-start flex bg-white items-center dark:text-black text-sm gap-4 font-medium p-2"
+        className="bg-primary px-3.5 w-full py-2 rounded-full text-primary-foreground shadow-xs hover:bg-primary/90 inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+      >
+        <div className=" -rotate-45 size-4">
+          <Link2 />
+        </div>
+        {extractDomainName(externalLink)}
+      </Link>
+      // </DropdownMenuItem>
+    );
+  }
+
   return (
     <div className=" w-full flex justify-center">
-      <div className=" w-full lg:w-3/4 sm:w-4/5 max-sm:px-4 max-w-5xl p-16">
-        <div className=" w-full flex justify-between">
-          <div>
+      <div className=" w-full lg:w-3/4 sm:w-4/5 max-sm:p-4 max-w-5xl p-16">
+        <div className=" w-full flex sm:justify-between max-sm:gap-2">
+          <div className=" w-1/4">
             <div className=" rounded-full size-64">
-              <Avatar className=" size-64 ">
+              <Avatar className=" md:size-64 size-24 ">
                 <AvatarImage
                   className=" select-none"
                   src={fetchedUserData.avatarURL}
                 />
-                <AvatarFallback className=" bg-amber-300 text-8xl">
+                <AvatarFallback className=" bg-amber-300 sm:text-8xl text-4xl">
                   {getInitials(fetchedUserData)}
                 </AvatarFallback>
               </Avatar>
             </div>
           </div>
-          <div className=" p-2  max-w-[400px] mr-24 flex flex-col gap-y-5">
-            <div className=" flex items-center justify-between">
+          <div className=" p-2  max-w-[500px] w-3/4 sm:mr-24 flex flex-col gap-y-5">
+            <div className=" flex flex-wrap items-center justify-between">
               <div>
-                <span>{fetchedUserData.username}</span>
-              </div>
-              <div>
-                <Button>Follow</Button>
+                <span className=" sm:text-xl text-base">
+                  {fetchedUserData.username}
+                </span>
               </div>
             </div>
             <div className=" flex gap-4">
-              <div className=" px-1.5 flex flex-wrap justify-center gap-1 items-baseline">
-                <span className=" text-5xl">{fetchedUserData.totalReads}</span>
+              <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline">
+                <span className=" sm:text-5xl text-2xl">
+                  {fetchedUserData.totalReads}
+                </span>
                 <span className=" text-gray-50/70">reads</span>
               </div>
-              <div className=" px-1.5 flex flex-wrap justify-center gap-1 items-baseline">
-                <span className=" text-5xl">
+              <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline">
+                <span className=" sm:text-5xl text-2xl">
                   {fetchedUserData.followerCount}
                 </span>
                 <span className=" text-gray-50/70">
                   {fetchedUserData.followerCount > 1 ? "followers" : "follower"}
                 </span>
               </div>
-              <div className=" px-1.5 flex flex-wrap justify-center gap-1 items-baseline">
-                <span className=" text-5xl">
+              <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline">
+                <span className=" sm:text-5xl text-2xl">
                   {fetchedUserData.followingCount}
                 </span>
                 <span className=" text-gray-50/70">following</span>
               </div>
             </div>
             <div>
-              <span className=" text-2xl">{fetchedUserData.fullName}</span>
+              <span className=" sm:text-2xl text-lg">
+                {fetchedUserData.fullName}
+              </span>
             </div>
             <div className="  dark:text-white">
               <ReadMore maxLength={100} className=" text-sm">
                 {fetchedUserData.bio}
               </ReadMore>
             </div>
-            <div className=" pt-2 flex gap-2.5">
-              {/* {fetchedUserData.instagramLink ? <Instagram /> : ""}
-              {fetchedUserData.twitterLink ? <Twitter /> : ""} */}
-              <Instagram />
-              <Twitter />
+            <div className=" pt-2 flex flex-wrap gap-2.5">
+              {fetchedUserData.instagramLink && (
+                <Instagram iglink={fetchedUserData.instagramLink} />
+              )}
+              {fetchedUserData.twitterLink && (
+                <Twitter twlink={fetchedUserData.twitterLink} />
+              )}
+              {hasOneLink && (
+                <ExternalLink externalLink={validExternalLinks[0]} />
+              )}
+              {hasMultipleLinks && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    {" "}
+                    <Button className=" rounded-full flex gap2">
+                      <Link2 className=" -rotate-45" />
+                      {"View more"}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel className=" text-center">
+                      External Links
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {fetchedUserData.externalLinks
+                      .filter(Boolean)
+                      .map((link: string, index: number) => (
+                        <DropdownMenuItem key={index}>
+                          <ExternalLink externalLink={link} />
+                        </DropdownMenuItem>
+                      ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+            <div>
+              <Button>Follow</Button>
             </div>
           </div>
         </div>
         <div className=" w-full mt-10">
-          <Tabs.Root defaultValue="account">
+          <Tabs.Root defaultValue="posts">
             <Tabs.List>
-              <Tabs.Trigger value="account">Posts</Tabs.Trigger>
-              <Tabs.Trigger value="documents">About</Tabs.Trigger>
+              <Tabs.Trigger value="posts">Posts</Tabs.Trigger>
+              <Tabs.Trigger value="about">About</Tabs.Trigger>
             </Tabs.List>
 
             <Box pt="4">
-              <Tabs.Content value="account">
+              <Tabs.Content value="posts">
                 <UserPost userid={fetchedUserData._id} />
               </Tabs.Content>
 
-              <Tabs.Content value="documents">
+              <Tabs.Content value="about">
                 <Text size="2">{fetchedUserData.about}</Text>
               </Tabs.Content>
             </Box>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -81,6 +81,10 @@ export default function SigninForm() {
       };
 
       const response = await apiFetcher(path, options);
+
+      if (response.status === 404) {
+        notFound(); // This will immediately stop rendering and show the 404 page
+      }
 
       const data = await response.json();
 
