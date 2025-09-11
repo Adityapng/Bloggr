@@ -116,7 +116,7 @@ export const getPostBySlug = async (req: Request, res: Response) => {
     // );
 
     const requestedPost = await Post.findOne({ slug: slug })
-      .populate("author", "username avatarUrl firstName lastName")
+      .populate("author", "username avatarUrl firstName lastName _id")
       .populate("tags", "name slug category");
 
     if (!requestedPost) {

@@ -208,6 +208,22 @@ const updateUserProfile = async (req: Request, res: Response) => {
   }
 };
 
+const getFollowStatus = async (req: Request, res: Response) => {
+  const userid = req.user.userid;
+  const { targetId } = req.params;
+
+  try {
+    const isFollowing = !!(await User.exists({
+      _id: targetId,
+      followers: userid,
+    }));
+    res.status(200).json({ isFollowing });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 export {
   deleteUserAvatarFromDB,
   deleteUserAvatarFromCloudinary,
@@ -217,4 +233,5 @@ export {
   updateUserProfile,
   getUserBookmarkedPosts,
   getUserLikedPosts,
+  getFollowStatus,
 };

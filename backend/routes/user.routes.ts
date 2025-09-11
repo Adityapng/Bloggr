@@ -9,7 +9,9 @@ import {
   updateUserProfile,
   getUserBookmarkedPosts,
   getUserLikedPosts,
+  getFollowStatus,
 } from "../controllers/user.controller";
+import { followController } from "../controllers/user/followRelationship.controller";
 
 const userRoutes = Router();
 
@@ -19,8 +21,25 @@ userRoutes.patch(
   deleteUserAvatarFromDB,
   deleteUserAvatarFromCloudinary
 );
+userRoutes.patch("/me", authenticateUserToken, updateUserProfile);
+userRoutes.patch(
+  "/:targetId/follow",
+  authenticateUserToken,
+  followController.follow
+);
+userRoutes.patch(
+  "/:targetId/unfollow",
+  authenticateUserToken,
+  followController.unfollow
+);
+
 userRoutes.get("/profile/:username", getUserProfile);
 userRoutes.get("/:userid/posts", getUserPosts);
+userRoutes.get(
+  "/:targetId/checkFollowStatus",
+  authenticateUserToken,
+  getFollowStatus
+);
 userRoutes.get(
   "/me",
   authenticateUserToken,
@@ -28,6 +47,5 @@ userRoutes.get(
 );
 userRoutes.get("/me/bookmarks", authenticateUserToken, getUserBookmarkedPosts);
 userRoutes.get("/me/likes", authenticateUserToken, getUserLikedPosts);
-userRoutes.patch("/me", authenticateUserToken, updateUserProfile);
 
 export default userRoutes;

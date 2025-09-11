@@ -1,4 +1,4 @@
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config({ path: "./.env" });
@@ -14,14 +14,16 @@ const app = express();
 connectDB();
 configureCloudinary();
 
-const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "http://192.168.1.7:3000",
-    "http://192.168.2.125:3000",
-    "http://10.206.239.19:3000",
-    /^http:\/\/10\.\d+\.\d+\.\d+:3000$/,
-  ],
+const allowedOrigins = [process.env.FRONTEND_URL || ""];
+
+const corsOptions: CorsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -32,8 +34,6 @@ app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(ensureSessionIdentifier);
-
-// TODO Think something for guest user token, refer convo with changba.
 
 app.use("/api", decodeUserIfPresent, apiRoutes);
 app.use("/", decodeUserIfPresent, homeRoutes);
