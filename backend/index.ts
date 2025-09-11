@@ -14,7 +14,9 @@ const app = express();
 connectDB();
 configureCloudinary();
 
-const allowedOrigins = [process.env.FRONTEND_URL || ""];
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:3000" || "",
+];
 
 const corsOptions: CorsOptions = {
   origin: function (origin, callback) {
