@@ -1,8 +1,8 @@
 import Bookmark from "@/components/interaction/Bookmark";
 import Like from "@/components/interaction/Like";
 import ShareButton from "@/components/interaction/Share";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Button } from "@/components/ui/button";
 import { ApiResponse, handleLoggedInUserData } from "@/lib/api";
 import { Blog, blogParsedContent } from "@/lib/BlogFunctionLib";
 import { apiFetcher } from "@/lib/apiFetcher";
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { CommentCount, CommentSection } from "@/components/interaction/Comment";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { RenderFollowUI } from "./followUIrender";
 
 interface PageProps {
   params: { [key: string]: string };
@@ -95,16 +96,6 @@ export default async function Page({ params }: PageProps) {
       day: "numeric",
     });
   }
-  const getInitials = (user: Blog): string => {
-    if (!user) {
-      return "GU";
-    }
-    const firstNameInitial = user.author.firstName
-      ? user.author.firstName[0]
-      : "";
-    const lastNameInitial = user.author.lastName ? user.author.lastName[0] : "";
-    return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
-  };
 
   const shareText = postData.content.substring(0, 100) + "...";
 
@@ -140,7 +131,7 @@ export default async function Page({ params }: PageProps) {
       </div>
     );
   };
-  console.log(postData.readingTime);
+  // console.log(postData.readingTime);
 
   return (
     <div className=" w-full flex justify-center">
@@ -148,23 +139,10 @@ export default async function Page({ params }: PageProps) {
         <p className=" font-bold sm:text-5xl text-2xl ">{postData.title}</p>
         <div className="flex flex-col items-center w-full pt-4 justify-between gap-4">
           <div className=" flex flex-wrap-reverse sm:flex-row gap-4 items-center w-full justify-between">
-            <div className=" flex items-center gap-2  ">
-              <Avatar className=" size-9 ">
-                <AvatarImage
-                  className=" select-none"
-                  src={postData.author.authorAvatar}
-                />
-                <AvatarFallback className=" bg-amber-300 text-xs">
-                  {getInitials(postData)}
-                </AvatarFallback>
-              </Avatar>
-              <p className=" text-sm" key={postData.author.username}>
-                {postData.author.firstName}
-              </p>
-              <Button variant="outline" className=" ml-2 rounded-full">
-                Follow
-              </Button>
-            </div>
+            <RenderFollowUI
+              postData={postData}
+              targetUserId={postData.author._id}
+            />
             <div className=" flex  gap-4 items-center">
               <div>
                 <p className=" text-sm">{postData.readingTime} min read</p>

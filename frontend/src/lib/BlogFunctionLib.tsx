@@ -5,6 +5,7 @@ export type authorObject = {
   authorAvatar: string;
   firstName: string;
   lastName: string;
+  _id: string;
 };
 
 type Tag = {

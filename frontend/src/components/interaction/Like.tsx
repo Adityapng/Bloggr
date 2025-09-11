@@ -33,10 +33,6 @@ export default function Like({
           method: "POST",
         });
 
-        // if (response.status === 404) {
-        //   notFound(); // This will immediately stop rendering and show the 404 page
-        // }
-
         if (!response.ok) {
           setUserHasLiked(initialUserHasLiked);
           setLikeCount(initialLikeCount);
