@@ -26,7 +26,7 @@ export const ensureSessionIdentifier = (
   res.cookie("anon_user_token", anonymousId, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "none",
     expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
     path: "/",
   });

@@ -5,7 +5,7 @@ const handleUserLogout = async (req: Request, res: Response) => {
     res.cookie("token", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "none",
       maxAge: 0,
       path: "/",
     });
