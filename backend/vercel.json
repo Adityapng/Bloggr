@@ -1,4 +1,15 @@
 {
-  "builds": [{ "src": "./index.ts", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "/index.tsS" }]
+  "version": 2,
+  "builds": [
+    {
+      "src": "./index.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.ts"
+    }
+  ]
 }

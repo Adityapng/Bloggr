@@ -40,8 +40,11 @@ app.use(ensureSessionIdentifier);
 app.use("/api", decodeUserIfPresent, apiRoutes);
 app.use("/", decodeUserIfPresent, homeRoutes);
 
-const PORT = Number(process.env.PORT) || 3030;
+if (process.env.NODE_ENV !== "production") {
+  const PORT = Number(process.env.PORT) || 5050;
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server started for development at Port ${PORT}`);
+  });
+}
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server started at Port ${PORT}`);
-});
+export default app;
