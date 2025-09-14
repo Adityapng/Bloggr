@@ -46,7 +46,7 @@ const handleUserSignin = async (req: Request, res: Response) => {
 
     // console.log("Token generated:", token ? "✅ Success" : "❌ Failed");
     const domain =
-      process.env.NODE_ENV === "production" ? ".vercel.app" : undefined;
+      process.env.NODE_ENV === "production" ? "bloggr.space" : undefined;
 
     console.log(
       `Setting cookie with domain: ${domain} (from signin controller)`

@@ -15,7 +15,7 @@ export const ensureSessionIdentifier = (
   const anonymousId: string = uuidv4();
 
   const domain =
-    process.env.NODE_ENV === "production" ? ".vercel.app" : undefined;
+    process.env.NODE_ENV === "production" ? "bloggr.space" : undefined;
 
   console.log(
     `Setting cookie with domain: ${domain} (from session identifier)`
