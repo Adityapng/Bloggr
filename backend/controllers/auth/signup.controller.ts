@@ -37,7 +37,7 @@ const handleUserSignup = async (req: Request, res: Response) => {
     const token = generateToken(userWithoutPassword);
 
     const domain =
-      process.env.NODE_ENV === "production" ? "bloggr.space" : undefined;
+      process.env.NODE_ENV === "production" ? ".bloggr.space" : undefined;
 
     console.log(
       `Setting cookie with domain: ${domain} (from signup controller)`
@@ -45,10 +45,10 @@ const handleUserSignup = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      // secure: process.env.NODE_ENV === "production",
-      secure: true,
-      sameSite: "none",
-      // domain: domain,
+      secure: process.env.NODE_ENV === "production",
+      // secure: true,
+      sameSite: "lax",
+      domain: domain,
       expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
       path: "/",
     });

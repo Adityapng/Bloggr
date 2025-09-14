@@ -15,7 +15,7 @@ export const ensureSessionIdentifier = (
   const anonymousId: string = uuidv4();
 
   const domain =
-    process.env.NODE_ENV === "production" ? "bloggr.space" : undefined;
+    process.env.NODE_ENV === "production" ? ".bloggr.space" : undefined;
 
   console.log(
     `Setting cookie with domain: ${domain} (from session identifier)`
@@ -23,10 +23,10 @@ export const ensureSessionIdentifier = (
 
   res.cookie("anon_user_token", anonymousId, {
     httpOnly: true,
-    secure: true,
-    // secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
-    // domain: domain,
+    // secure: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    domain: domain,
     expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
     path: "/",
   });

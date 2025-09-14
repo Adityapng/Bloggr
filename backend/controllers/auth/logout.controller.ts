@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 const handleUserLogout = async (req: Request, res: Response) => {
   try {
     const domain =
-      process.env.NODE_ENV === "production" ? "bloggr.space" : undefined;
+      process.env.NODE_ENV === "production" ? ".bloggr.space" : undefined;
 
     console.log(
       `Setting cookie with domain: ${domain} (from logout controller)`
@@ -11,12 +11,12 @@ const handleUserLogout = async (req: Request, res: Response) => {
 
     res.cookie("token", "", {
       httpOnly: true,
-      // secure: process.env.NODE_ENV === "production",
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      // secure: true,
+      sameSite: "lax",
       maxAge: 0,
       path: "/",
-      // domain: domain,
+      domain: domain,
     });
 
     return res.status(200).json({ message: "Logout successful" });

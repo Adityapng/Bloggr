@@ -46,7 +46,7 @@ const handleUserSignin = async (req: Request, res: Response) => {
 
     // console.log("Token generated:", token ? "✅ Success" : "❌ Failed");
     const domain =
-      process.env.NODE_ENV === "production" ? "bloggr.space" : undefined;
+      process.env.NODE_ENV === "production" ? ".bloggr.space" : undefined;
 
     console.log(
       `Setting cookie with domain: ${domain} (from signin controller)`
@@ -54,12 +54,12 @@ const handleUserSignin = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      // secure: process.env.NODE_ENV === "production",
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      // secure: true,
+      sameSite: "lax",
       expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
       path: "/",
-      // domain: domain,
+      domain: domain,
     });
 
     res.clearCookie("anon_user_token", { path: "/" });
