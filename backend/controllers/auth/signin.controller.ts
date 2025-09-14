@@ -45,6 +45,10 @@ const handleUserSignin = async (req: Request, res: Response) => {
     const token = generateToken(user.toObject());
 
     // console.log("Token generated:", token ? "✅ Success" : "❌ Failed");
+    const domain =
+      process.env.NODE_ENV === "production" ? ".vercel.app" : undefined;
+
+    console.log(`Setting cookie with domain: ${domain}`); // For debugging
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -52,6 +56,7 @@ const handleUserSignin = async (req: Request, res: Response) => {
       sameSite: "none",
       expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
       path: "/",
+      domain: domain,
     });
 
     res.clearCookie("anon_user_token", { path: "/" });

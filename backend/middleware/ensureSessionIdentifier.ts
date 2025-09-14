@@ -9,32 +9,23 @@ export const ensureSessionIdentifier = (
   const authToken = req.cookies.token;
   const anonToken = req.cookies.anon_user_token;
 
-  // if (authToken || anonToken) {
-  //   console.log("auth ", authToken || "anon ", anonToken);
-
-  //   return next();
-  // }
-  // console.log(" ");
-  // console.log(" ");
-  // console.log(anonToken);
-  // console.log(" ");
-  // console.log(" ");
-
   const anonymousId: string = uuidv4();
-  // console.log("anon id generated from ensureSessionIdentifier");
+
+  const domain =
+    process.env.NODE_ENV === "production" ? ".vercel.app" : undefined;
+
+  console.log(`Setting cookie with domain: ${domain}`); // For debugging
 
   res.cookie("anon_user_token", anonymousId, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "none",
+    domain: domain,
     expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
     path: "/",
   });
 
   req.cookies.anon_user_token = anonymousId;
-  // console.log(
-  //   "anon id set to cookies in req object from ensureSessionIdentifier"
-  // );
 
   next();
 };
