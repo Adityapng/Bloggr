@@ -5,7 +5,9 @@ const handleUserLogout = async (req: Request, res: Response) => {
     const domain =
       process.env.NODE_ENV === "production" ? ".vercel.app" : undefined;
 
-    console.log(`Setting cookie with domain: ${domain}`); // For debugging
+    console.log(
+      `Setting cookie with domain: ${domain} (from logout controller)`
+    ); // For debugging
 
     res.cookie("token", "", {
       httpOnly: true,
@@ -13,7 +15,7 @@ const handleUserLogout = async (req: Request, res: Response) => {
       sameSite: "none",
       maxAge: 0,
       path: "/",
-      domain: domain,
+      // domain: domain,
     });
 
     return res.status(200).json({ message: "Logout successful" });

@@ -39,13 +39,15 @@ const handleUserSignup = async (req: Request, res: Response) => {
     const domain =
       process.env.NODE_ENV === "production" ? ".vercel.app" : undefined;
 
-    console.log(`Setting cookie with domain: ${domain}`); // For debugging
+    console.log(
+      `Setting cookie with domain: ${domain} (from signup controller)`
+    ); // For debugging
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "none",
-      domain: domain,
+      // domain: domain,
       expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
       path: "/",
     });
