@@ -45,7 +45,8 @@ const handleUserSignup = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      // secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "none",
       // domain: domain,
       expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
