@@ -2,12 +2,12 @@ import User from "../../models/user.model";
 import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 import { generateToken } from "../../config/tokens";
+import connectDB from "../../config/connection";
 
 const handleUserSignin = async (req: Request, res: Response) => {
   try {
     // console.log("Current NODE_ENV:", process.env.NODE_ENV);
     const { username, email, password } = req.body;
-
     if (!(username || email) || !password) {
       return res
         .status(400)
@@ -15,6 +15,7 @@ const handleUserSignin = async (req: Request, res: Response) => {
     }
     const lowerCaseLoginID = (username || email).toLowerCase();
 
+    await connectDB();
     // console.log("🔍 Looking for user:", lowerCaseLoginID);
 
     const user = await User.findOne({

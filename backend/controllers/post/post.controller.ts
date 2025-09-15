@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Post from "../../models/post.model";
 import { Types } from "mongoose";
 import Tag from "../../models/tag.model";
+import connectDB from "../../config/connection";
 
 export const getAllPost = async (req: Request, res: Response) => {
   try {
@@ -12,6 +13,7 @@ export const getAllPost = async (req: Request, res: Response) => {
     const skip = (page - 1) * perPage;
 
     const filterQuery: { [key: string]: any } = {};
+    await connectDB();
 
     if (categoryFilter && categoryFilter !== "All") {
       const tagsInCategory = await Tag.find({
@@ -110,7 +112,7 @@ export const getPostBySlug = async (req: Request, res: Response) => {
   try {
     const { slug } = req.params;
     const requesterId = req.sessionId || null;
-
+    await connectDB();
     // console.log(
     //   `User ID for read count from [get post from slug]: ${requesterId}`
     // );
@@ -155,7 +157,7 @@ export const createPost = async (req: Request, res: Response) => {
 
     const MAX_WORDS = 10000;
     const MIN_WORDS = 50;
-
+    await connectDB();
     if (wordCount > MAX_WORDS) {
       return res.status(400).json({
         error: `Post exceeds the maximum word limit of ${MAX_WORDS} words.`,

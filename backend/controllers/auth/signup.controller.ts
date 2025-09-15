@@ -1,3 +1,4 @@
+import connectDB from "../../config/connection";
 import { generateToken } from "../../config/tokens";
 import User from "../../models/user.model";
 import { Request, Response } from "express";
@@ -9,6 +10,7 @@ const handleUserSignup = async (req: Request, res: Response) => {
     if (!firstName || !lastName || !email || !username || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
+    await connectDB();
 
     const existingEmail = await User.findOne({ email: email.toLowerCase() });
     if (existingEmail) {

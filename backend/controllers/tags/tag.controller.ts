@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import Tag from "../../models/tag.model";
+import connectDB from "../../config/connection";
 
 export const getAllTagsCategorized = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const allTags = await Tag.find({}).sort({ category: 1, name: 1 });
 
     const categorizedTags = allTags.reduce((acc, tag) => {
