@@ -152,6 +152,21 @@ export const createPost = async (req: Request, res: Response) => {
     } = req.body;
 
     const authorId = req.user.userid;
+
+    const MAX_WORDS = 10000;
+    const MIN_WORDS = 50;
+
+    if (wordCount > MAX_WORDS) {
+      return res.status(400).json({
+        error: `Post exceeds the maximum word limit of ${MAX_WORDS} words.`,
+      });
+    }
+    if (wordCount < MIN_WORDS) {
+      return res.status(400).json({
+        error: `Post must be at least ${MIN_WORDS} words long.`,
+      });
+    }
+
     const foundTags = await Tag.find({ name: { $in: tagnames } });
     const tagIds = foundTags.map((tag) => tag._id);
 

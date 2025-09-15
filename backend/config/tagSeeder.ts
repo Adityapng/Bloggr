@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import path from "path";
 import slugify from "slugify";
-import Tag from "./tag.model"; // Adjust path if needed
+import Tag from "../models/tag.model"; // Adjust path if needed
 
 const seedDatabase = async () => {
   try {
@@ -48,8 +48,9 @@ const seedDatabase = async () => {
         "Shell Scripting",
         "Web Development",
         "Frontend",
-        "HTML5",
-        "CSS3",
+        "Full-Stack Development",
+        "HTML 5",
+        "CSS 3",
         "JavaScript",
         "ES6",
         "ESNext",
@@ -449,6 +450,7 @@ const seedDatabase = async () => {
         "Product Management",
         "Roadmap",
         "User Stories",
+        "Portfolio",
         "Agile Development",
         "Lean Startup",
         "MVP",

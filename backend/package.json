@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --watch . --ext ts --exec ts-node index.ts",
-    "seed": "npx ts-node models/tagSeeder.ts"
+    "seed": "npx ts-node config/tagSeeder.ts"
   },
   "author": "",
   "license": "ISC",

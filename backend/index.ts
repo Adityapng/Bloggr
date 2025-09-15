@@ -11,7 +11,17 @@ import configureCloudinary from "./config/cloudinary";
 import { ensureSessionIdentifier } from "./middleware/ensureSessionIdentifier";
 
 const app = express();
-connectDB();
+connectDB()
+  .then(() => {
+    console.log("Database connection established for this instance.");
+  })
+  .catch((err) => {
+    console.error(
+      "Failed to establish database connection for this instance:",
+      err
+    );
+  });
+
 configureCloudinary();
 
 const allowedOrigins = [
