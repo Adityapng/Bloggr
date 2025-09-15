@@ -192,6 +192,7 @@ export default function WritePage() {
             className="text-2xl"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            onFocus={(e) => e.stopPropagation()}
             disabled={isLoading}
           />
           <div className="relative  w-full border rounded-lg overflow-hidden">
@@ -219,6 +220,7 @@ export default function WritePage() {
                       type="text"
                       placeholder="Add a tag..."
                       onChange={(e) => handleTagSearch(e.target.value)}
+                      onFocus={(e) => e.stopPropagation()}
                       className={`pl-10`}
                       disabled={isLoading}
                     />
