@@ -146,7 +146,7 @@ export default function HomePage() {
       <div className="  xl:w-1/4 lg:w-1/5  w-0 hidden md:block"></div>
       <div className="  xl:w-1/2 lg:w-3/5 p-4 w-full">
         <div className="md:p-4 w-full ">
-          <div className=" w-full flex justify-center">
+          <div className=" w-full ">
             <ScrollableButtonList
               sendFilterCategory={filterFeed}
               activeButtonId={filterValue}
