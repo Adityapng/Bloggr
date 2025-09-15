@@ -9,6 +9,7 @@ import { ApiResponse } from "@/lib/api";
 import { Textarea } from "../ui/textarea";
 import { cn } from "@/lib/utils";
 import EmojiPopover from "./EmojiPopover";
+import { Spinner } from "../ui/spinner";
 // import { notFound } from "next/navigation";
 
 interface CommentCountProps {
@@ -364,7 +365,9 @@ export function CommentSection({
 
           <div>
             {isFetching ? (
-              <div>Loading comments...</div>
+              <div className=" w-full h-full flex items-center justify-center">
+                <Spinner className="mr-2 h-12 w-12" />
+              </div>
             ) : (
               <div>
                 {fetchedCommentData.map((data, index) => {

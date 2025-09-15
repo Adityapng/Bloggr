@@ -10,11 +10,11 @@ export const apiFetcher = async (path: string, options: RequestInit = {}) => {
     if (token) {
       options.headers = { ...options.headers, Cookie: `token=${token}` };
     }
-    console.log("ssr");
+    // console.log("ssr");
     console.log(token);
   } else {
     options.credentials = "include";
-    console.log("csr");
+    // console.log("csr");
   }
 
   return fetch(URL, options);

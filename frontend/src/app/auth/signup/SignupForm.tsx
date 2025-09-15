@@ -16,6 +16,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, User, Mail, Lock, UserCheck } from "lucide-react";
 import { apiFetcher } from "@/lib/apiFetcher";
+import { Spinner } from "@/components/ui/spinner";
 
 // --- Type Definitions ---
 interface FormData {
@@ -143,168 +144,181 @@ export default function SignupForm() {
   // --- JSX (No changes needed here, it was well-structured) ---
   return (
     <div className="min-h-[90dvh] flex items-center justify-center  p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
-            Welcome to Bloggr
-          </CardTitle>
-          <CardDescription className="text-center">
-            Enter your information below to create your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {errors.general && (
-              <Alert variant="destructive">
-                <AlertDescription>{errors.general}</AlertDescription>
-              </Alert>
-            )}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="firstName"
-                    placeholder="John"
-                    value={formData.firstName}
-                    onChange={(e) =>
-                      handleInputChange("firstName", e.target.value)
-                    }
-                    className={`pl-10 ${
-                      errors.firstName ? "border-destructive" : ""
-                    }`}
-                    disabled={isLoading}
-                  />
-                </div>
-                {errors.firstName && (
-                  <p className="text-sm text-destructive">{errors.firstName}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="lastName"
-                    placeholder="Doe"
-                    value={formData.lastName}
-                    onChange={(e) =>
-                      handleInputChange("lastName", e.target.value)
-                    }
-                    className={`pl-10 ${
-                      errors.lastName ? "border-destructive" : ""
-                    }`}
-                    disabled={isLoading}
-                  />
-                </div>
-                {errors.lastName && (
-                  <p className="text-sm text-destructive">{errors.lastName}</p>
-                )}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="john.doe@example.com"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  className={`pl-10 ${
-                    errors.email ? "border-destructive" : ""
-                  }`}
-                  disabled={isLoading}
-                />
-              </div>
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email}</p>
+      {isLoading ? (
+        <div className=" w-full h-96 flex items-center justify-center">
+          <Spinner className="mr-2 h-12 w-12" />
+        </div>
+      ) : (
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">
+              Welcome to Bloggr
+            </CardTitle>
+            <CardDescription className="text-center">
+              Enter your information below to create your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {errors.general && (
+                <Alert variant="destructive">
+                  <AlertDescription>{errors.general}</AlertDescription>
+                </Alert>
               )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <div className="relative">
-                <UserCheck className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="username"
-                  placeholder="johndoe123"
-                  value={formData.username}
-                  onChange={(e) =>
-                    handleInputChange("username", e.target.value.toLowerCase())
-                  }
-                  className={`pl-10 ${
-                    errors.username ? "border-destructive" : ""
-                  }`}
-                  disabled={isLoading}
-                />
-              </div>
-              {errors.username && (
-                <p className="text-sm text-destructive">{errors.username}</p>
-              )}
-              <p className="text-xs text-muted-foreground">
-                3-20 characters, letters, numbers, and underscores only
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    handleInputChange("password", e.target.value)
-                  }
-                  className={`pl-10 pr-10 ${
-                    errors.password ? "border-destructive" : ""
-                  }`}
-                  disabled={isLoading}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={isLoading}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="firstName"
+                      placeholder="John"
+                      value={formData.firstName}
+                      onChange={(e) =>
+                        handleInputChange("firstName", e.target.value)
+                      }
+                      className={`pl-10 ${
+                        errors.firstName ? "border-destructive" : ""
+                      }`}
+                      disabled={isLoading}
+                    />
+                  </div>
+                  {errors.firstName && (
+                    <p className="text-sm text-destructive">
+                      {errors.firstName}
+                    </p>
                   )}
-                </Button>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="lastName"
+                      placeholder="Doe"
+                      value={formData.lastName}
+                      onChange={(e) =>
+                        handleInputChange("lastName", e.target.value)
+                      }
+                      className={`pl-10 ${
+                        errors.lastName ? "border-destructive" : ""
+                      }`}
+                      disabled={isLoading}
+                    />
+                  </div>
+                  {errors.lastName && (
+                    <p className="text-sm text-destructive">
+                      {errors.lastName}
+                    </p>
+                  )}
+                </div>
               </div>
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password}</p>
-              )}
-              <p className="text-xs text-muted-foreground">
-                At least 8 characters with uppercase, lowercase, and number
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="john.doe@example.com"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    className={`pl-10 ${
+                      errors.email ? "border-destructive" : ""
+                    }`}
+                    disabled={isLoading}
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-sm text-destructive">{errors.email}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <div className="relative">
+                  <UserCheck className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="username"
+                    placeholder="johndoe123"
+                    value={formData.username}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "username",
+                        e.target.value.toLowerCase()
+                      )
+                    }
+                    className={`pl-10 ${
+                      errors.username ? "border-destructive" : ""
+                    }`}
+                    disabled={isLoading}
+                  />
+                </div>
+                {errors.username && (
+                  <p className="text-sm text-destructive">{errors.username}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  3-20 characters, letters, numbers, and underscores only
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
+                    className={`pl-10 pr-10 ${
+                      errors.password ? "border-destructive" : ""
+                    }`}
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive">{errors.password}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  At least 8 characters with uppercase, lowercase, and number
+                </p>
+              </div>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Creating account..." : "Create account"}
+              </Button>
+            </form>
+            <div className="mt-6">
+              <Separator />
+              <p className="text-center text-sm text-muted-foreground mt-4">
+                Already have an account?{" "}
+                <Button
+                  variant="link"
+                  className="p-0 h-auto font-normal"
+                  onClick={() => router.push("/auth/signin/")}
+                >
+                  Sign in
+                </Button>
               </p>
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Creating account..." : "Create account"}
-            </Button>
-          </form>
-          <div className="mt-6">
-            <Separator />
-            <p className="text-center text-sm text-muted-foreground mt-4">
-              Already have an account?{" "}
-              <Button
-                variant="link"
-                className="p-0 h-auto font-normal"
-                onClick={() => router.push("/auth/signin/")}
-              >
-                Sign in
-              </Button>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

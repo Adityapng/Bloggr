@@ -352,7 +352,15 @@ const Page = async () => {
               </Tabs.Content>
 
               <Tabs.Content value="about">
-                <Text size="2">{fetchedUserData.about}</Text>
+                <Text size="2">
+                  {fetchedUserData.about.length == 0 ? (
+                    <div className=" w-full h-96 flex items-center justify-center">
+                      <p>About not added, go to edit profile to add About</p>
+                    </div>
+                  ) : (
+                    fetchedUserData.about
+                  )}
+                </Text>
               </Tabs.Content>
             </Box>
           </Tabs.Root>

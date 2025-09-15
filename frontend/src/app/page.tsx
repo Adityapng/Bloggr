@@ -23,6 +23,7 @@ import {
 import { apiFetcher } from "@/lib/apiFetcher";
 import { ScrollableButtonList } from "@/components/feedFilter/FeedFilter";
 import { notFound } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 
 export const dynamic = "force-dynamic";
 
@@ -145,7 +146,7 @@ export default function HomePage() {
       <div className="  xl:w-1/4 lg:w-1/5  w-0 hidden md:block"></div>
       <div className="  xl:w-1/2 lg:w-3/5 p-4 w-full">
         <div className="md:p-4 w-full ">
-          <div className="">
+          <div className=" w-full flex justify-center">
             <ScrollableButtonList
               sendFilterCategory={filterFeed}
               activeButtonId={filterValue}
@@ -154,7 +155,9 @@ export default function HomePage() {
           </div>
           <div className="min-h-[400px] w-full">
             {isLoading ? (
-              <p className="text-center">Loading posts...</p>
+              <div className=" w-full h-96 flex items-center justify-center">
+                <Spinner className="mr-2 h-12 w-12" />
+              </div>
             ) : (
               <div className="space-y-10 w-full flex flex-col items-center">
                 {posts

@@ -16,6 +16,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, User, Lock } from "lucide-react";
 import { apiFetcher } from "@/lib/apiFetcher";
+import { Spinner } from "@/components/ui/spinner";
 
 // --- Type Definitions ---
 interface FormData {
@@ -105,83 +106,97 @@ export default function SigninForm() {
   };
 
   return (
-    <Card className="w-full max-w-sm border-2 shadow-xl">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Welcome Back!</CardTitle>
-        <CardDescription>Sign in to continue to your account</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {errors.general && (
-            <Alert variant="destructive">
-              <AlertDescription>{errors.general}</AlertDescription>
-            </Alert>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="loginId">Username or Email</Label>
-            <div className="relative">
-              <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="loginId"
-                placeholder="johndoe or john@example.com"
-                value={formData.loginId}
-                onChange={(e) => handleInputChange("loginId", e.target.value)}
-                className="pl-10"
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={(e) => handleInputChange("password", e.target.value)}
-                className="pl-10 pr-10"
-                disabled={isLoading}
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4 text-muted-foreground" />
-                ) : (
-                  <Eye className="h-4 w-4 text-muted-foreground" />
-                )}
-              </Button>
-            </div>
-          </div>
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Sign in"}
-          </Button>
-        </form>
-
-        <div className="mt-6">
-          <Separator />
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            Don&apos;t have an account?{" "}
-            <Button
-              variant="link"
-              className="p-0 h-auto font-normal"
-              onClick={() => router.push("/auth/signup")}
-            >
-              Sign up
-            </Button>
-          </p>
+    <div>
+      {isLoading ? (
+        <div className=" w-full h-96 flex items-center justify-center">
+          <Spinner className="mr-2 h-12 w-12" />
         </div>
-      </CardContent>
-    </Card>
+      ) : (
+        <Card className="w-full max-w-sm border-2 shadow-xl">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold">Welcome Back!</CardTitle>
+            <CardDescription>
+              Sign in to continue to your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {errors.general && (
+                <Alert variant="destructive">
+                  <AlertDescription>{errors.general}</AlertDescription>
+                </Alert>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="loginId">Username or Email</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="loginId"
+                    placeholder="johndoe or john@example.com"
+                    value={formData.loginId}
+                    onChange={(e) =>
+                      handleInputChange("loginId", e.target.value)
+                    }
+                    className="pl-10"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
+                    className="pl-10 pr-10"
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Signing in..." : "Sign in"}
+              </Button>
+            </form>
+
+            <div className="mt-6">
+              <Separator />
+              <p className="text-center text-sm text-muted-foreground mt-4">
+                Don&apos;t have an account?{" "}
+                <Button
+                  variant="link"
+                  className="p-0 h-auto font-normal"
+                  onClick={() => router.push("/auth/signup")}
+                >
+                  Sign up
+                </Button>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 }

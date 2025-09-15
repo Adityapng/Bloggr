@@ -341,7 +341,9 @@ const Page = async ({ params }: PageProps) => {
           <Tabs.Root defaultValue="posts">
             <Tabs.List>
               <Tabs.Trigger value="posts">Posts</Tabs.Trigger>
-              <Tabs.Trigger value="about">About</Tabs.Trigger>
+              {fetchedUserData.about.length > 0 && (
+                <Tabs.Trigger value="about">About</Tabs.Trigger>
+              )}
             </Tabs.List>
 
             <Box pt="4">
