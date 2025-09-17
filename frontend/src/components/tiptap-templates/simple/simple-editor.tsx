@@ -16,7 +16,7 @@ import { Selection, Placeholder } from "@tiptap/extensions";
 import { CharacterCount } from "@tiptap/extension-character-count";
 
 // --- UI Primitives ---
-import { Button } from "@/components/tiptap-ui-primitive/button";
+// import { Button } from "@/components/tiptap-ui-primitive/button";
 import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
 import {
   Toolbar,
@@ -43,12 +43,12 @@ import { BlockquoteButton } from "@/components/tiptap-ui/blockquote-button";
 import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button";
 import {
   ColorHighlightPopover,
-  ColorHighlightPopoverContent,
+  // ColorHighlightPopoverContent,
   ColorHighlightPopoverButton,
 } from "@/components/tiptap-ui/color-highlight-popover";
 import {
   LinkPopover,
-  LinkContent,
+  // LinkContent,
   LinkButton,
 } from "@/components/tiptap-ui/link-popover";
 import { MarkButton } from "@/components/tiptap-ui/mark-button";
@@ -56,14 +56,14 @@ import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
 
 // --- Icons ---
-import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
-import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon";
-import { LinkIcon } from "@/components/tiptap-icons/link-icon";
+// import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
+// import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon";
+// import { LinkIcon } from "@/components/tiptap-icons/link-icon";
 
 // --- Hooks ---
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useWindowSize } from "@/hooks/use-window-size";
-import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
+// import { useIsMobile } from "@/hooks/use-mobile";
+// import { useWindowSize } from "@/hooks/use-window-size";
+// import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 
 // --- Components ---
 import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
@@ -166,34 +166,34 @@ const MainToolbarContent = ({
   );
 };
 
-const MobileToolbarContent = ({
-  type,
-  onBack,
-}: {
-  type: "highlighter" | "link";
-  onBack: () => void;
-}) => (
-  <>
-    <ToolbarGroup>
-      <Button data-style="ghost" onClick={onBack}>
-        <ArrowLeftIcon className="tiptap-button-icon" />
-        {type === "highlighter" ? (
-          <HighlighterIcon className="tiptap-button-icon" />
-        ) : (
-          <LinkIcon className="tiptap-button-icon" />
-        )}
-      </Button>
-    </ToolbarGroup>
+// const MobileToolbarContent = ({
+//   type,
+//   onBack,
+// }: {
+//   type: "highlighter" | "link";
+//   onBack: () => void;
+// }) => (
+//   <>
+//     <ToolbarGroup>
+//       <Button data-style="ghost" onClick={onBack}>
+//         <ArrowLeftIcon className="tiptap-button-icon" />
+//         {type === "highlighter" ? (
+//           <HighlighterIcon className="tiptap-button-icon" />
+//         ) : (
+//           <LinkIcon className="tiptap-button-icon" />
+//         )}
+//       </Button>
+//     </ToolbarGroup>
 
-    <ToolbarSeparator />
+//     <ToolbarSeparator />
 
-    {type === "highlighter" ? (
-      <ColorHighlightPopoverContent />
-    ) : (
-      <LinkContent />
-    )}
-  </>
-);
+//     {type === "highlighter" ? (
+//       <ColorHighlightPopoverContent />
+//     ) : (
+//       <LinkContent />
+//     )}
+//   </>
+// );
 
 export function SimpleEditor({
   onUpdate,
@@ -201,8 +201,10 @@ export function SimpleEditor({
   onImageUpload,
   onWordCountChange,
 }: SimpleEditorProps) {
-  const isMobile = useIsMobile();
-  const { height } = useWindowSize();
+  // const isMobile = useIsMobile();
+  const isMobile = false;
+  // console.log("isMobile:", isMobile, "window.innerWidth:", window.innerWidth);
+  // const { height } = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
     "main" | "highlighter" | "link"
   >("main");
@@ -281,54 +283,42 @@ export function SimpleEditor({
     },
   });
 
-  const rect = useCursorVisibility({
-    editor,
-    overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
-  });
+  // const rect = useCursorVisibility({
+  //   editor,
+  //   overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
+  // });
 
   React.useEffect(() => {
-    if (!isMobile && mobileView !== "main") {
-      setMobileView("main");
-    }
+    // if (!isMobile && mobileView !== "main") {
+    //   setMobileView("main");
+    // }
     if (editor) {
       onWordCountChange(editor.storage.characterCount.words());
     }
   }, [isMobile, mobileView, editor, onWordCountChange]);
 
   return (
-    <div className="simple-editor-wrapper">
+    <div className="simple-editor-wrapper flex flex-col">
       <EditorContext.Provider value={{ editor }}>
-        <Toolbar
-          ref={toolbarRef}
-          style={{
-            ...(isMobile
-              ? {
-                  bottom: `calc(100% - ${height - rect.y}px)`,
-                }
-              : {}),
-          }}
-        >
-          {mobileView === "main" ? (
+        <Toolbar ref={toolbarRef}>
+          {mobileView === "main" && (
             <MainToolbarContent
               onHighlighterClick={() => setMobileView("highlighter")}
               onLinkClick={() => setMobileView("link")}
               isMobile={isMobile}
             />
-          ) : (
-            <MobileToolbarContent
-              type={mobileView === "highlighter" ? "highlighter" : "link"}
-              onBack={() => setMobileView("main")}
-            />
           )}
         </Toolbar>
 
-        <EditorContent
-          editor={editor}
-          role="presentation"
-          className="simple-editor-content"
-        />
+        <div className="flex-1 overflow-y-auto max-w-[948px] w-full mx-auto">
+          <EditorContent
+            editor={editor}
+            role="presentation"
+            className="simple-editor-content h-full"
+          />
+        </div>
         {editor && ( // Make sure the editor is initialized before trying to access its properties
-          <div className="editor-footer flex items-center justify-end gap-4 p-2 text-sm text-gray-500 border-t">
+          <div className="h-10 max-h-10 flex items-center justify-end gap-4 p-2 text-sm text-gray-500 dark:bg-black bg-white border-t sticky bottom-0">
             <span>{editor.storage.characterCount.words()} Words</span>
           </div>
         )}

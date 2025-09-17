@@ -168,8 +168,8 @@ export default function WritePage() {
               {error}
             </div>
           )}
-          <div className=" flex justify-between">
-            <h1 className="text-3xl font-bold">Create Post</h1>
+          <div className=" flex justify-between items-center">
+            <h1 className="md:text-3xl text-2xl font-bold">Create Post</h1>
             <div className=" flex gap-0.5">
               <Button
                 onClick={handleSaveDraftClick}
@@ -189,7 +189,7 @@ export default function WritePage() {
           </div>
           <Input
             placeholder="Enter your title here..."
-            className="text-2xl"
+            className="text-base"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onFocus={(e) => e.stopPropagation()}
