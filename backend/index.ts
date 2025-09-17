@@ -24,6 +24,7 @@ connectDB()
 
 configureCloudinary();
 
+// TODO remove this once developement is done
 const allowedOrigins = [
   process.env.FRONTEND_URL || "http://localhost:3000" || "",
 ];
