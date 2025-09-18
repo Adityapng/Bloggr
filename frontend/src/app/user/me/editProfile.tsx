@@ -303,7 +303,7 @@ const EditProfile = ({ userdata }: EditProfileProps) => {
           <DialogTrigger asChild className=" ">
             <Button>Edit profile</Button>
           </DialogTrigger>
-          <DialogContent className="fixed flex flex-col gap-2 left-1/2 top-1/2 max-h-[95vh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray1 p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow dark:bg-[#121212] bg-gray-50">
+          <DialogContent className="fixed ease-in-out flex flex-col gap-2 left-1/2 top-1/2 sm:max-h-[95dvh] max-h-[90dvh] overflow-hidden h-[90dvh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray1 p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow dark:bg-[#121212] bg-gray-50">
             <DialogHeader>
               <DialogTitle className="m-0 text-[17px] font-medium text-mauve12">
                 Edit profile
@@ -314,7 +314,9 @@ const EditProfile = ({ userdata }: EditProfileProps) => {
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} id="edit-profile-form">
-              <ScrollArea className=" h-[600px] w-full flex flex-col gap-2 scroll-smooth py-1">
+              <ScrollArea
+                className={`h-[calc(90dvh-180px)] w-full flex flex-col gap-2 scroll-smooth py-1`}
+              >
                 <div className=" w-full flex flex-col gap-2 pr-3">
                   <div className=" flex flex-col p-2 gap-2 px-2.5 ml-1.5 items-center">
                     <Avatar className=" size-20">
@@ -478,20 +480,6 @@ const EditProfile = ({ userdata }: EditProfileProps) => {
                       onRemove={handleRemoveExternalLink}
                     />
                   ))}
-                  {/* <Button
-                type="button"
-                onClick={() =>
-                  setExternalLinkQuantity((prev) =>
-                    prev < 3 ? prev + 1 : prev
-                  )
-                }
-                disabled={isLoading || externalLinkQuantity >= 3}
-                variant="secondary"
-              >
-                {externalLinkQuantity >= 3
-                  ? "Maximum Links (3)"
-                  : "Add another link"}
-              </Button> */}
                   <Button
                     type="button"
                     onClick={() =>
@@ -512,23 +500,24 @@ const EditProfile = ({ userdata }: EditProfileProps) => {
               </ScrollArea>
             </form>
             <DialogFooter>
-              {/* <DialogClose asChild>
-            <button
-              type="button"
-              className="absolute right-2.5 top-2.5 inline-flex size-[25px] appearance-none items-center justify-center rounded-full text-violet11 bg-gray3 hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 focus:outline-none"
-              aria-label="Close"
-            >
-              <Cross2Icon />
-            </button>
-          </DialogClose> */}
-              <div className="mt-[25px] flex justify-end">
-                <Button
-                  type="submit"
-                  form="edit-profile-form"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Saving..." : "Save changes"}
-                </Button>
+              <div className="flex gap-2 ">
+                <div className=" flex justify-end w-full">
+                  <DialogClose asChild>
+                    <Button type="button" aria-label="Close" className="w-full">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                </div>
+                <div className="flex justify-end w-full">
+                  <Button
+                    className="w-full"
+                    type="submit"
+                    form="edit-profile-form"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Saving..." : "Save changes"}
+                  </Button>
+                </div>
               </div>
             </DialogFooter>
           </DialogContent>

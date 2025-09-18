@@ -65,7 +65,7 @@ export default function Bookmark({
         className={`h-6 w-6 transition-colors ${
           userHasBookmarked
             ? "text-blue-500 fill-blue-500"
-            : "text-gray-500 hover:text-blue-400"
+            : "text-white hover:text-blue-400"
         }`}
       />
     </button>

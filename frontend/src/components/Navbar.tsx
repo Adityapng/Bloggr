@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import AuthButtons from "../components/Authbuttons";
@@ -16,31 +17,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { GoToCreatePost, GoToProfile, GoToSettings } from "./navButtons";
 import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
-import { User } from "lucide-react";
+// import { User } from "lucide-react";
+import { useSession } from "@/components/auth/SessionProvider";
 
-interface User {
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  avatarURL?: string;
-  bio?: string;
-  fullName: string;
-  role: string;
-}
+// interface NavbarProps {
+//   user: User | null;
+//   isLoggedIn: boolean;
+// }
 
-interface NavbarProps {
-  user: User | null;
-  isLoggedIn: boolean;
-}
+const Navbar = () => {
+  const session = useSession();
 
-const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
   const getInitials = (): string => {
-    if (!user) {
+    if (!session.isLoggedIn) {
       return "GU";
     }
-    const firstNameInitial = user.firstName ? user.firstName[0] : "";
-    const lastNameInitial = user.lastName ? user.lastName[0] : "";
+    const firstNameInitial = session.user?.firstName
+      ? session.user?.firstName[0]
+      : "";
+    const lastNameInitial = session.user?.lastName
+      ? session.user?.lastName[0]
+      : "";
     return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
   };
   const LoggedinState = () => {
@@ -52,7 +49,10 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar className=" size-9 ">
-              <AvatarImage className=" select-none" src={user?.avatarURL} />
+              <AvatarImage
+                className=" select-none"
+                src={session.user?.avatarURL}
+              />
               <AvatarFallback className=" bg-amber-300 text-sm">
                 {getInitials()}
               </AvatarFallback>
@@ -71,14 +71,17 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
             <DropdownMenuSeparator />
             <DropdownMenuLabel className=" flex w-58 p-2 gap-3">
               <Avatar className=" size-9 ">
-                <AvatarImage className=" select-none" src={user?.avatarURL} />
+                <AvatarImage
+                  className=" select-none"
+                  src={session.user?.avatarURL}
+                />
                 <AvatarFallback className=" bg-amber-300 text-sm">
                   {getInitials()}
                 </AvatarFallback>
               </Avatar>
               <div className=" flex flex-col justify-around">
-                <span className=" capitalize">{user?.fullName}</span>{" "}
-                <small className=" text-gray-400">{user?.email}</small>
+                <span className=" capitalize">{session.user?.fullName}</span>{" "}
+                <small className=" text-gray-400">{session.user?.email}</small>
               </div>
             </DropdownMenuLabel>
           </DropdownMenuContent>
@@ -121,7 +124,11 @@ const Navbar = ({ user, isLoggedIn }: NavbarProps) => {
           </div>
         </div>
         <div className=" flex md:gap-2 gap-1 items-center">
-          {user && isLoggedIn ? <LoggedinState /> : <LoggedOutState />}
+          {session.user && session.isLoggedIn ? (
+            <LoggedinState />
+          ) : (
+            <LoggedOutState />
+          )}
         </div>
       </div>
     </div>

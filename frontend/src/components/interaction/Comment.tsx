@@ -10,6 +10,8 @@ import { Textarea } from "../ui/textarea";
 import { cn } from "@/lib/utils";
 import EmojiPopover from "./EmojiPopover";
 import { Spinner } from "../ui/spinner";
+import Link from "next/link";
+import { useSession } from "../auth/SessionProvider";
 // import { notFound } from "next/navigation";
 
 interface CommentCountProps {
@@ -225,6 +227,7 @@ export function CommentSection({
   >([]);
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const session = useSession();
 
   useEffect(() => {
     if (!postid) return;
@@ -340,6 +343,13 @@ export function CommentSection({
     }
     return author.username.substring(0, 2).toUpperCase();
   };
+  const profileLink = (postAuthor: string) => {
+    if (session.user?.username === postAuthor) {
+      return "/user/me";
+    } else {
+      return `/user/${postAuthor}`;
+    }
+  };
 
   return (
     <div>
@@ -381,18 +391,25 @@ export function CommentSection({
                     <div key={data._id || index} className="my-4 flex">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <Avatar className="size-9">
-                            <AvatarImage
-                              className="select-none"
-                              src={author.avatarUrl}
-                            />
-                            <AvatarFallback className="bg-amber-300 text-xs">
-                              {getInitials(data)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <p className="text-sm font-semibold text-gray-100">
-                            {author.username}
-                          </p>
+                          <Link
+                            href={profileLink(author.username)}
+                            key={author.username}
+                          >
+                            <div className="flex items-center gap-2">
+                              <Avatar className="size-9">
+                                <AvatarImage
+                                  className="select-none"
+                                  src={author.avatarUrl}
+                                />
+                                <AvatarFallback className="bg-amber-300 text-xs">
+                                  {getInitials(data)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <p className="text-sm font-semibold text-gray-100">
+                                {author.username}
+                              </p>
+                            </div>
+                          </Link>
                           <p className="text-xs text-gray-50/50">
                             {formatCommentDate(data.createdAt)}
                           </p>

@@ -1,17 +1,19 @@
-import Bookmark from "@/components/interaction/Bookmark";
-import Like from "@/components/interaction/Like";
-import ShareButton from "@/components/interaction/Share";
+// import Bookmark from "@/components/interaction/Bookmark";
+// import Like from "@/components/interaction/Like";
+// import ShareButton from "@/components/interaction/Share";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // import { Button } from "@/components/ui/button";
 import { ApiResponse, handleLoggedInUserData } from "@/lib/api";
 import { Blog, blogParsedContent } from "@/lib/BlogFunctionLib";
 import { apiFetcher } from "@/lib/apiFetcher";
-import { Eye, Ellipsis } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { CommentCount, CommentSection } from "@/components/interaction/Comment";
+import { CommentSection } from "@/components/interaction/Comment";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RenderFollowUI } from "./followUIrender";
+import ScrollWrapper from "./ScrollWrapper";
+// import { useRef } from "react";
 
 interface PageProps {
   params: { [key: string]: string };
@@ -99,38 +101,46 @@ export default async function Page({ params }: PageProps) {
 
   const shareText = postData.content.substring(0, 100) + "...";
 
-  const PostInteractions = () => {
-    return (
-      <div className=" flex justify-between w-full border border-x-0 py-4 items-center">
-        <div className=" flex gap-8">
-          <div>
-            <Like
-              postId={postData._id}
-              initialLikeCount={postData.likeCount}
-              initialUserHasLiked={initialUserHasLiked}
-            />
-          </div>
-          <div>
-            <CommentCount count={postData.commentCount} />
-          </div>
-        </div>
-        <div className=" flex gap-8 items-center">
-          <div>
-            <ShareButton title={postData.title} text={shareText} />
-          </div>
-          <div className=" flex items-center">
-            <Bookmark
-              postId={postData._id}
-              initialUserHasBookmarked={initialUserHasBookmarked}
-            />
-          </div>
-          <div>
-            <Ellipsis />
-          </div>
-        </div>
-      </div>
-    );
-  };
+  // const sectionRef = useRef<HTMLDivElement>(null);
+
+  //   const handleScroll = () => {
+  //     sectionRef.current?.scrollIntoView({ behavior: "smooth" });
+  //   };
+
+  // const PostInteractions = () => {
+  //   return (
+  //     <div className=" flex justify-between w-full border border-x-0 py-4 items-center">
+  //       <div className=" flex gap-8">
+  //         <div>
+  //           <Like
+  //             postId={postData._id}
+  //             initialLikeCount={postData.likeCount}
+  //             initialUserHasLiked={initialUserHasLiked}
+  //           />
+  //         </div>
+  //         <div
+  //         // onClick={handleScroll}
+  //         >
+  //           <CommentCount count={postData.commentCount} />
+  //         </div>
+  //       </div>
+  //       <div className=" flex gap-8 items-center">
+  //         <div>
+  //           <ShareButton title={postData.title} text={shareText} />
+  //         </div>
+  //         <div className=" flex items-center">
+  //           <Bookmark
+  //             postId={postData._id}
+  //             initialUserHasBookmarked={initialUserHasBookmarked}
+  //           />
+  //         </div>
+  //         {/* <div>
+  //           <Ellipsis />
+  //         </div> */}
+  //       </div>
+  //     </div>
+  //   );
+  // };
   // console.log(postData.readingTime);
 
   return (
@@ -158,7 +168,15 @@ export default async function Page({ params }: PageProps) {
               </div>
             </div>
           </div>
-          <PostInteractions />
+          <ScrollWrapper
+            postId={postData._id}
+            initialUserHasLiked={initialUserHasLiked}
+            initialUserHasBookmarked={initialUserHasBookmarked}
+            likeCount={postData.likeCount}
+            commentCount={postData.commentCount}
+            shareTitle={postData.title}
+            shareText={shareText}
+          />
         </div>
         <br />
         <div>{blogParsedContent(postData.content)}</div>
@@ -181,9 +199,17 @@ export default async function Page({ params }: PageProps) {
         </div>
         <br />
         <div>
-          <PostInteractions />
+          <ScrollWrapper
+            postId={postData._id}
+            initialUserHasLiked={initialUserHasLiked}
+            initialUserHasBookmarked={initialUserHasBookmarked}
+            likeCount={postData.likeCount}
+            commentCount={postData.commentCount}
+            shareTitle={postData.title}
+            shareText={shareText}
+          />
         </div>
-        <div className=" py-6">
+        <div className=" py-6" id="comment-section">
           <CommentSection
             count={postData.commentCount}
             postid={postData._id}

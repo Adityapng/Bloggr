@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { handleLoggedInUserData } from "@/lib/api";
+import { ApiResponse, handleLoggedInUserData } from "@/lib/api";
 import { Noto_Sans } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { Theme } from "@radix-ui/themes";
+import { SessionProvider } from "@/components/auth/SessionProvider";
 
 const notoSans = Noto_Sans({
   subsets: ["latin"],
@@ -39,9 +40,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const data: LoggedInUserData | null = await handleLoggedInUserData();
+  const data: ApiResponse | null = await handleLoggedInUserData();
 
-  const navbarData: LoggedInUserData = data || {
+  const navbarData: ApiResponse = data || {
     isLoggedIn: false,
     user: null,
   };
@@ -49,17 +50,19 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${notoSans.className} antialiased  dark:bg-[#121212]`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <header className="md:px-10 px-5 py-5 sticky top-0 z-50 backdrop-blur-sm ">
-            <Navbar user={navbarData.user} isLoggedIn={navbarData.isLoggedIn} />
-          </header>{" "}
-          <Theme accentColor="gray">{children}</Theme>
-        </ThemeProvider>
+        <SessionProvider session={navbarData}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <header className="md:px-10 px-5 py-5 sticky top-0 z-50 backdrop-blur-sm ">
+              <Navbar />
+            </header>{" "}
+            <Theme accentColor="gray">{children}</Theme>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

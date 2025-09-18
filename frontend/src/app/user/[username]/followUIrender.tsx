@@ -1,33 +1,25 @@
 "use client";
-
-import { useSession } from "@/components/auth/SessionProvider";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { apiFetcher } from "@/lib/apiFetcher";
-import { Blog } from "@/lib/BlogFunctionLib";
 import { followUser, unfollowUser } from "@/lib/follow";
-import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 
 interface RenderFollowUIProp {
   // followState: boolean;
   targetUserId: string;
-  postData: Blog;
 }
 
-export function RenderFollowUI({
+export function FollowButton({
   // followState,
   targetUserId,
-  postData,
 }: RenderFollowUIProp) {
   const [follow, setFollow] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
-  const session = useSession();
 
   useEffect(() => {
     // Make sure we have the author's ID before fetching
-    if (!postData?.author?._id) return;
+    if (!targetUserId) return;
 
     const fetchFollowState = async () => {
       setIsLoading(true);
@@ -35,7 +27,7 @@ export function RenderFollowUI({
         // ✅ FIX 2: Ensure this URL matches your backend route structure EXACTLY.
         // It should be /api/users/:targetId/checkFollowStatus
         const response = await apiFetcher(
-          `/api/users/${postData.author._id}/checkFollowStatus`
+          `/api/users/${targetUserId}/checkFollowStatus`
         );
 
         if (!response.ok) {
@@ -55,7 +47,7 @@ export function RenderFollowUI({
 
     fetchFollowState();
     // ✅ This dependency array is crucial to prevent infinite loops
-  }, [postData?.author?._id]);
+  }, [targetUserId]);
 
   const followController = async () => {
     if (isPending) return;
@@ -80,55 +72,22 @@ export function RenderFollowUI({
     });
   };
 
-  const getInitials = (user: Blog): string => {
-    if (!user) {
-      return "GU";
-    }
-    const firstNameInitial = user.author.firstName
-      ? user.author.firstName[0]
-      : "";
-    const lastNameInitial = user.author.lastName ? user.author.lastName[0] : "";
-    return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
-  };
-
-  const profileLink = (postAuthor: string) => {
-    if (session.user?.username === postAuthor) {
-      return "/user/me";
-    } else {
-      return `/user/${postAuthor}`;
-    }
-  };
-
   return (
     <div className="flex items-center gap-2">
-      <Link href={profileLink(postData.author.username)}>
-        <div className=" flex items-center gap-2 rounded-full ">
-          <Avatar className=" size-9 ">
-            <AvatarImage
-              className=" select-none"
-              src={postData.author.authorAvatar}
-            />
-            <AvatarFallback className=" bg-amber-300 text-xs">
-              {getInitials(postData)}
-            </AvatarFallback>
-          </Avatar>
-          <p className=" text-sm pr-2" key={postData.author.username}>
-            {postData.author.username}
-          </p>
-        </div>
-      </Link>
       {isLoading ? (
-        <Button variant="outline" className="ml-2 rounded-full" disabled>
+        <Button className="rounded-full" disabled>
           ...
         </Button>
       ) : (
         <Button
-          variant="outline"
-          className=" ml-2 rounded-full"
+          variant={follow ? "outline" : "default"}
+          className="rounded-full "
           onClick={followController}
           disabled={isLoading}
         >
-          {isLoading ? "..." : follow ? "Unfollow" : "Follow"}
+          <span className=" ">
+            {isLoading ? "..." : follow ? "Unfollow" : "Follow"}
+          </span>
         </Button>
       )}
     </div>

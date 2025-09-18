@@ -236,9 +236,9 @@ const Page = async () => {
 
   return (
     <div className=" w-full flex justify-center">
-      <div className=" w-full lg:w-3/4 sm:w-4/5 max-sm:p-4 max-w-5xl p-16">
-        <div className=" w-full flex sm:justify-between max-sm:gap-2">
-          <div className=" w-1/4">
+      <div className=" w-full lg:w-5/6  max-sm:p-4 max-w-7xl p-16">
+        <div className=" w-full flex sm:justify-between gap-2">
+          <div className="sm:w-auto w-1/4 lg:pl-16 xl:pl-48">
             <div className=" rounded-full size-64">
               <Avatar className=" md:size-64 size-24 ">
                 <AvatarImage
@@ -251,7 +251,7 @@ const Page = async () => {
               </Avatar>
             </div>
           </div>
-          <div className=" p-2  max-w-[500px] w-3/4 sm:mr-24 flex flex-col gap-y-5">
+          <div className=" p-2  sm:w-auto w-3/4 lg:pr-16 xl:pr-48 flex flex-col gap-y-5">
             <div className=" flex flex-wrap items-center justify-between">
               <div>
                 <span className=" sm:text-xl text-base">

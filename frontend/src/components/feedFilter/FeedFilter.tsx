@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { apiFetcher } from "@/lib/apiFetcher";
-import { Spinner } from "../ui/spinner";
+import { Skeleton } from "../ui/skeleton";
 // import { notFound } from "next/navigation";
 
 interface ScrollableButtonListProps {
@@ -106,7 +106,15 @@ export const ScrollableButtonList: React.FC<ScrollableButtonListProps> = ({
     <div>
       {areTagsLoading ? (
         <div className=" w-full flex items-center justify-center">
-          <Spinner className="mr-2 h-12 w-12" />
+          <div className="w-full flex justify-center py-3">
+            <div className="flex gap-4 overflow-x-auto">
+              <Skeleton className="h-10 w-20 rounded-full" />
+              <Skeleton className="h-10 w-32 rounded-full" />
+              <Skeleton className="h-10 w-28 rounded-full" />
+              <Skeleton className="h-10 w-24 rounded-full" />
+              <Skeleton className="h-10 w-36 rounded-full" />
+            </div>
+          </div>
         </div>
       ) : (
         <div className={`w-full ${className}`}>
