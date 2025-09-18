@@ -10,8 +10,7 @@ export const followController = {
     session.startTransaction();
 
     try {
-      // TODO requesterId comming as undefined
-      const requesterId = req.user.id;
+      const requesterId = req.user.userid;
       const { targetId } = req.params;
       console.log(requesterId);
       console.log(targetId);
@@ -51,7 +50,7 @@ export const followController = {
     session.startTransaction();
 
     try {
-      const requesterId = req.user.id;
+      const requesterId = req.user.userid;
       const { targetId } = req.params;
 
       if (!requesterId || !targetId) {

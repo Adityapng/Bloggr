@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
 import Post from "../models/post.model";
 import connectDB from "../config/connection";
+import mongoose from "mongoose";
 
 const deleteUserAvatarFromDB = async (req: Request, res: Response) => {
   // const cloudinary = require("cloudinary").v2;
@@ -70,8 +71,9 @@ const getUserProfile = async (req: Request, res: Response) => {
         },
       },
     ]);
-    console.log(requestedUserId, "results found");
     const TotalReads = results[0]?.totalReads || 0;
+    console.log(requestedUserId);
+    console.log(results);
 
     const userdata = await User.findOneAndUpdate(
       { username: username },
@@ -142,10 +144,11 @@ const getCurrectAuthenticatedUserDetails = async (
   try {
     const userid = req.user.userid;
     await connectDB();
+    const objectUserId = mongoose.Types.ObjectId.createFromHexString(userid);
     const results = await Post.aggregate([
       {
         $match: {
-          author: userid,
+          author: objectUserId,
         },
       },
       {

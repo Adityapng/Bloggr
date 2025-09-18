@@ -180,6 +180,7 @@ export const createPost = async (req: Request, res: Response) => {
       status,
       author: authorId,
       wordCount: wordCount,
+      likes: [authorId],
     });
 
     await newPost.save();
