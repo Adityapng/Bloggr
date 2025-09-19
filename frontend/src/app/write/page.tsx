@@ -220,6 +220,7 @@ export default function WritePage() {
               onFocus={(e) => e.stopPropagation()}
               value={title}
               disabled={isLoading}
+              onMouseDown={(e) => e.preventDefault()}
             />
             <div className="relative  w-full border rounded-lg overflow-hidden">
               <SimpleEditor
@@ -247,7 +248,7 @@ export default function WritePage() {
                         type="text"
                         placeholder="Add a tag..."
                         onChange={(e) => handleTagSearch(e.target.value)}
-                        onFocus={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.preventDefault()}
                         className={`pl-10`}
                         disabled={isLoading}
                       />
