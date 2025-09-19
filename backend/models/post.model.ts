@@ -19,7 +19,7 @@ export interface IPost extends Document {
   readCount: number;
   commentCount: number;
   tags: Types.ObjectId[];
-  status: "draft" | "published";
+  status: "draft" | "published" | "archived" | "trash";
   readingTime: number;
   createdAt: Date;
   updatedAt: Date;
@@ -95,7 +95,7 @@ const postSchema = new Schema<IPost>(
     ],
     status: {
       type: String,
-      enum: ["draft", "published"],
+      enum: ["draft", "published", "archived", "trash"],
     },
     readingTime: {
       type: Number,

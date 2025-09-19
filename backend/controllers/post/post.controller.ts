@@ -12,14 +12,13 @@ export const getAllPost = async (req: Request, res: Response) => {
     const perPage = 10;
     const skip = (page - 1) * perPage;
 
-    const filterQuery: { [key: string]: any } = {};
+    const filterQuery: { [key: string]: any } = { status: "published" };
     await connectDB();
 
     if (categoryFilter && categoryFilter !== "All") {
       const tagsInCategory = await Tag.find({
         category: categoryFilter,
       }).select("_id");
-      // console.log(tagsInCategory, "tagsInCategory", categoryFilter);
 
       const tagIds = tagsInCategory.map((tag) => tag._id);
 

@@ -8,8 +8,13 @@ import {
   getCurrectAuthenticatedUserDetails,
   updateUserProfile,
   getUserBookmarkedPosts,
+  getUserDraftedPosts,
   getUserLikedPosts,
   getFollowStatus,
+  getUserArchivedPosts,
+  handleArchivePost,
+  handleUnarchivePost,
+  handleDeletePost,
 } from "../controllers/user.controller";
 import { followController } from "../controllers/user/followRelationship.controller";
 
@@ -47,5 +52,27 @@ userRoutes.get(
 );
 userRoutes.get("/me/bookmarks", authenticateUserToken, getUserBookmarkedPosts);
 userRoutes.get("/me/likes", authenticateUserToken, getUserLikedPosts);
+userRoutes.get("/me/drafts", authenticateUserToken, getUserDraftedPosts);
+userRoutes.get("/me/archive", authenticateUserToken, getUserArchivedPosts);
+userRoutes.patch(
+  "/me/post/:postid/archive",
+  authenticateUserToken,
+  handleArchivePost
+);
+userRoutes.patch(
+  "/me/post/:postid/unarchive",
+  authenticateUserToken,
+  handleUnarchivePost
+);
+userRoutes.patch(
+  "/me/post/:postid/move-to-trash",
+  authenticateUserToken,
+  handleUnarchivePost
+);
+userRoutes.delete(
+  "/me/post/:postid/delete",
+  authenticateUserToken,
+  handleDeletePost
+);
 
 export default userRoutes;

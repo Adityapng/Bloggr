@@ -72,16 +72,16 @@ const getUserProfile = async (req: Request, res: Response) => {
       },
     ]);
     const TotalReads = results[0]?.totalReads || 0;
-    console.log(requestedUserId);
-    console.log(results);
+    // console.log(requestedUserId);
+    // console.log(results);
 
     const userdata = await User.findOneAndUpdate(
       { username: username },
       { $set: { totalReads: TotalReads } },
       { new: true }
     )
-      .populate("followers", "username avatarUrl fullName")
-      .populate("following", "username avatarUrl fullName");
+      .populate("followers", "username avatarUrl firstName lastName")
+      .populate("following", "username avatarUrl firstName lastName");
 
     if (!userdata) {
       return res.status(404).json({ error: "User not found" });
@@ -98,7 +98,7 @@ const getUserPosts = async (req: Request, res: Response) => {
   try {
     const { userid } = req.params;
     await connectDB();
-    const posts = await Post.find({ author: userid })
+    const posts = await Post.find({ author: userid, status: "published" })
       .sort({ createdAt: -1 })
       .populate("author", "username firstName lastName avatarUrl");
     res.status(200).json(posts);
@@ -137,6 +137,144 @@ const getUserLikedPosts = async (req: Request, res: Response) => {
   }
 };
 
+const getUserDraftedPosts = async (req: Request, res: Response) => {
+  try {
+    const { userid } = req.user;
+    await connectDB();
+
+    const posts = await Post.find({ author: userid, status: "draft" })
+      .sort({ createdAt: -1 })
+      .populate("author", "username firstName lastName avatarUrl");
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error getting user posts:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+};
+const getUserArchivedPosts = async (req: Request, res: Response) => {
+  try {
+    const { userid } = req.user;
+    await connectDB();
+
+    const posts = await Post.find({ author: userid, status: "archived" })
+      .sort({ createdAt: -1 })
+      .populate("author", "username firstName lastName avatarUrl");
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error getting user posts:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+};
+const handleArchivePost = async (req: Request, res: Response) => {
+  try {
+    const { postid } = req.params;
+    const userid = req.user?.userid; // Make sure this exists
+
+    if (!postid || !userid) {
+      return res.status(400).json({ error: "Missing post ID or user ID" });
+    }
+
+    const result = await Post.findOneAndUpdate(
+      { _id: postid }, // Make sure user owns the post
+      { status: "archived" },
+      { new: true } // Return the updated document
+    );
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ error: "Post not found or not authorized" });
+    }
+
+    return res.status(200).json({ message: "Post archived", post: result });
+  } catch (error) {
+    console.error("Error archiving post:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const handleUnarchivePost = async (req: Request, res: Response) => {
+  try {
+    const { postid } = req.params;
+    const userid = req.user?.userid; // Make sure this exists
+
+    if (!postid || !userid) {
+      return res.status(400).json({ error: "Missing post ID or user ID" });
+    }
+
+    const result = await Post.findOneAndUpdate(
+      { _id: postid }, // Make sure user owns the post
+      { status: "published" },
+      { new: true } // Return the updated document
+    );
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ error: "Post not found or not authorized" });
+    }
+
+    return res.status(200).json({ message: "Post archived", post: result });
+  } catch (error) {
+    console.error("Error archiving post:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const handleMoveToTrash = async (req: Request, res: Response) => {
+  try {
+    const { postid } = req.params;
+
+    if (!postid) {
+      return res.status(400).json({ error: "Missing post ID" });
+    }
+
+    const trashedPost = await Post.findOneAndUpdate(
+      { _id: postid },
+      { status: "trash" },
+      { new: true }
+    );
+
+    if (!trashedPost) {
+      return res
+        .status(404)
+        .json({ error: "Post not found or not authorized" });
+    }
+
+    return res.status(200).json({ message: "Post moved to trash" });
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const handleDeletePost = async (req: Request, res: Response) => {
+  try {
+    const { postid } = req.params;
+
+    if (!postid) {
+      return res.status(400).json({ error: "Missing post ID" });
+    }
+    console.log("delete req eceived for post", postid);
+
+    const deletedPost = await Post.findOneAndDelete({
+      _id: postid,
+    });
+    console.log(deletedPost);
+
+    if (!deletedPost) {
+      return res
+        .status(404)
+        .json({ error: "Post not found or not authorized" });
+    }
+
+    return res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 const getCurrectAuthenticatedUserDetails = async (
   req: Request,
   res: Response
@@ -166,8 +304,8 @@ const getCurrectAuthenticatedUserDetails = async (
       { $set: { totalReads: TotalReads } },
       { new: true }
     )
-      .populate("followers", "username avatarUrl fullName")
-      .populate("following", "username avatarUrl fullName");
+      .populate("followers", "username avatarUrl firstName lastName")
+      .populate("following", "username avatarUrl firstName lastName");
 
     if (!userdata) {
       return res.status(404).json({ error: "User not found" });
@@ -231,5 +369,11 @@ export {
   updateUserProfile,
   getUserBookmarkedPosts,
   getUserLikedPosts,
+  getUserDraftedPosts,
   getFollowStatus,
+  getUserArchivedPosts,
+  handleArchivePost,
+  handleUnarchivePost,
+  handleDeletePost,
+  handleMoveToTrash,
 };
