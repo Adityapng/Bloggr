@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { notFound, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import useSWR, { mutate } from "swr";
 
 import {
@@ -47,7 +47,6 @@ interface UserPostFeedProps {
 
 export function UserPost({ userid }: UserPostFeedProps) {
   const session = useSession();
-  const router = useRouter();
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [isMovingToTrash, setIsMovingToTrash] = useState<string | null>(null);
   const [isArchiving, setIsArchiving] = useState<string | null>(null);
@@ -69,12 +68,43 @@ export function UserPost({ userid }: UserPostFeedProps) {
     return response.json();
   };
   const SWR_KEY = `/api/users/${userid}/posts`;
+
   const { data, error, isLoading } = useSWR(SWR_KEY, swrFetcher, {
     dedupingInterval: 300000,
     revalidateOnFocus: false,
   });
+
+  const [showRetrying, setShowRetrying] = useState(true);
+
+  useEffect(() => {
+    if (!data && !isLoading) {
+      const timer = setTimeout(() => {
+        setShowRetrying(true);
+        mutate(`/api/users/me/bookmarks`);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [data, isLoading]);
+
   if (!data) {
-    router.refresh();
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+        <div className="text-5xl mb-4">⚠️</div>
+        <h2 className="text-2xl font-semibold mb-2">
+          Couldn&apos;t fetch data
+        </h2>
+        <p className="text-sm text-gray-400 max-w-md">
+          No data was returned from the server.
+        </p>
+        {showRetrying && (
+          <>
+            <p className="text-base mb-4">Retrying...</p>
+            <Spinner className="size-5 mx-auto" />
+          </>
+        )}
+      </div>
+    );
   }
 
   if (error) return notFound();
@@ -424,7 +454,7 @@ export function UserBookmarkedPost() {
     swrFetcher,
     { dedupingInterval: 300000, revalidateOnFocus: false }
   );
-  const [showRetrying, setShowRetrying] = useState(false);
+  const [showRetrying, setShowRetrying] = useState(true);
 
   useEffect(() => {
     if (!data && !isLoading) {
@@ -623,7 +653,7 @@ export function UserLikedPost() {
     dedupingInterval: 300000,
     revalidateOnFocus: false,
   });
-  const [showRetrying, setShowRetrying] = useState(false);
+  const [showRetrying, setShowRetrying] = useState(true);
 
   useEffect(() => {
     if (!data && !isLoading) {
@@ -826,7 +856,7 @@ export function UserDraftedPost() {
     revalidateOnFocus: false,
   });
 
-  const [showRetrying, setShowRetrying] = useState(false);
+  const [showRetrying, setShowRetrying] = useState(true);
 
   useEffect(() => {
     if (!data && !isLoading) {
@@ -1142,7 +1172,7 @@ export function UserArchivedPost() {
     dedupingInterval: 300000,
     revalidateOnFocus: false,
   });
-  const [showRetrying, setShowRetrying] = useState(false);
+  const [showRetrying, setShowRetrying] = useState(true);
 
   useEffect(() => {
     if (!data && !isLoading) {
