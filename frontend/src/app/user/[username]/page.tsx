@@ -396,7 +396,7 @@ const Page = async ({ params }: PageProps) => {
                     </span>
                   </div>
                 </DialogTrigger>
-                <DialogContent className="fixed ease-in-out flex flex-col gap-2 left-1/2 top-1/2 sm:max-h-[65dvh] max-h-[65dvh] overflow-hidden h-[650dvh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow dark:bg-[#121212] bg-gray-50">
+                <DialogContent>
                   <RenderFollowerFollowing
                     defaultTab="follower"
                     followerList={fetchedUserData.followers}
@@ -427,7 +427,7 @@ const Page = async ({ params }: PageProps) => {
                     <span className=" dark:text-gray-50/70">following</span>
                   </div>
                 </DialogTrigger>
-                <DialogContent className="fixed ease-in-out flex flex-col gap-2 left-1/2 top-1/2 sm:max-h-[65dvh] max-h-[65dvh] overflow-hidden h-[650dvh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow dark:bg-[#121212] bg-gray-50">
+                <DialogContent>
                   <RenderFollowerFollowing
                     defaultTab="following"
                     followerList={fetchedUserData.followers}
