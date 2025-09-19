@@ -3,13 +3,18 @@ import { apiFetcher } from "@/lib/apiFetcher";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 // import Image from "next/image";
-// import { useSession } from "@/components/auth/SessionProvider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { cn } from "@/lib/utils";
 import { UserPost } from "./FetchPost";
-import { Box, Tabs, Text } from "@radix-ui/themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Link2 } from "lucide-react";
 import { FollowButton } from "./followUIrender";
+import { ScrollArea } from "@/components/ui/scroll-area";
 // import { useEffect, useState } from "react";
 
 interface ReadMoreProps {
@@ -43,6 +49,14 @@ interface PageProps {
   params: { [key: string]: string };
 }
 
+interface FollowerFollowingList {
+  _id: string;
+  avatarURL: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+}
+
 interface FetchedData {
   _id: string;
   username: string;
@@ -52,6 +66,8 @@ interface FetchedData {
   fullName: string;
   firstName: string;
   lastName: string;
+  followers: FollowerFollowingList[];
+  following: FollowerFollowingList[];
   followerCount: number;
   followingCount: number;
   totalReads: number;
@@ -60,6 +76,12 @@ interface FetchedData {
   externalLinks: string[];
   about: string;
 }
+type RenderFollowerFollowingProps = {
+  defaultTab: string;
+
+  followerList: FollowerFollowingList[];
+  followingList: FollowerFollowingList[];
+};
 
 const getInitials = (user: FetchedData): string => {
   if (!user) {
@@ -67,6 +89,13 @@ const getInitials = (user: FetchedData): string => {
   }
   const firstNameInitial = user.firstName ? user.firstName[0] : "";
   const lastNameInitial = user.lastName ? user.lastName[0] : "";
+  return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
+};
+const getInitialsFromFirstnameAndLastname = (
+  user: FollowerFollowingList
+): string => {
+  const firstNameInitial = user?.firstName ? user?.firstName[0] : "";
+  const lastNameInitial = user?.lastName ? user?.lastName[0] : "";
   return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
 };
 
@@ -223,6 +252,104 @@ const Page = async ({ params }: PageProps) => {
     );
   }
 
+  const RenderFollowerFollowing: React.FC<RenderFollowerFollowingProps> = ({
+    defaultTab,
+    followerList,
+    followingList,
+  }) => {
+    return (
+      <Tabs defaultValue={defaultTab}>
+        <TabsList className="flex w-full border-b border-border">
+          <TabsTrigger
+            className="w-1/2 py-2 text-center text-muted-foreground radix-state-active:text-foreground radix-state-active:border-b-2 radix-state-active:border-primary transition"
+            value="follower"
+          >
+            {followerList.length > 1 ? "Followers" : "Follower"}
+          </TabsTrigger>
+
+          <TabsTrigger
+            value="following"
+            className="w-1/2 py-2 text-center text-muted-foreground radix-state-active:text-foreground radix-state-active:border-b-2 radix-state-active:border-primary transition"
+          >
+            Following
+          </TabsTrigger>
+        </TabsList>
+
+        <div className=" pt-4">
+          <TabsContent value="follower">
+            <ScrollArea
+              className={`h-[calc(65dvh-130px)] w-fullscroll-smooth py-1`}
+            >
+              <div className=" w-full flex flex-col gap-3 ">
+                {followerList.map((user: FollowerFollowingList) => (
+                  <div key={user._id} className=" flex justify-between">
+                    <div className="flex gap-4 items-center">
+                      <Avatar className=" size-10 ">
+                        <AvatarImage
+                          className=" select-none"
+                          src={user?.avatarURL}
+                        />
+                        <AvatarFallback className=" bg-amber-300 text-sm">
+                          {getInitialsFromFirstnameAndLastname(user)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className=" flex flex-col justify-around">
+                        <span className=" text-sm">{user?.username}</span>{" "}
+                        <small className=" capitalize text-xs text-gray-400">
+                          {`${user?.firstName} ${user.lastName}`}
+                        </small>
+                      </div>
+                    </div>
+                    <div>
+                      <Button variant="outline" size="sm">
+                        following
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="following">
+            <ScrollArea
+              className={`h-[calc(65dvh-130px)] w-fullscroll-smooth py-1`}
+            >
+              <div className=" w-full flex flex-col gap-3 ">
+                {followingList.map((user: FollowerFollowingList) => (
+                  <div key={user._id} className=" flex justify-between">
+                    <div className="flex gap-4 items-center">
+                      <Avatar className=" size-10 ">
+                        <AvatarImage
+                          className=" select-none"
+                          src={user?.avatarURL}
+                        />
+                        <AvatarFallback className=" bg-amber-300 text-sm">
+                          {getInitialsFromFirstnameAndLastname(user)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className=" flex flex-col justify-around">
+                        <span className=" text-sm">{user?.username}</span>{" "}
+                        <small className=" capitalize text-xs text-gray-400">
+                          {`${user?.firstName} ${user.lastName}`}
+                        </small>
+                      </div>
+                    </div>
+                    <div>
+                      <Button variant="outline" size="sm">
+                        following
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+        </div>
+      </Tabs>
+    );
+  };
+
   return (
     <div className=" w-full flex justify-center">
       <div className=" w-full lg:w-5/6 sm:w-4/5 max-sm:p-4 max-w-7xl p-16">
@@ -253,22 +380,74 @@ const Page = async ({ params }: PageProps) => {
                 <span className=" sm:text-5xl text-2xl">
                   {fetchedUserData.totalReads}
                 </span>
-                <span className=" text-gray-50/70">reads</span>
+                <span className=" dark:text-gray-50/70">reads</span>
               </div>
-              <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline">
-                <span className=" sm:text-5xl text-2xl">
-                  {fetchedUserData.followerCount}
-                </span>
-                <span className=" text-gray-50/70">
-                  {fetchedUserData.followerCount > 1 ? "followers" : "follower"}
-                </span>
-              </div>
-              <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline">
-                <span className=" sm:text-5xl text-2xl">
-                  {fetchedUserData.followingCount}
-                </span>
-                <span className=" text-gray-50/70">following</span>
-              </div>
+
+              <Dialog>
+                <DialogTrigger>
+                  <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline rounded-sm hover:bg-slate-500/10">
+                    <span className=" sm:text-5xl text-2xl">
+                      {fetchedUserData.followerCount}
+                    </span>
+                    <span className=" dark:text-gray-50/70">
+                      {fetchedUserData.followerCount > 1
+                        ? "followers"
+                        : "follower"}
+                    </span>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="fixed ease-in-out flex flex-col gap-2 left-1/2 top-1/2 sm:max-h-[65dvh] max-h-[65dvh] overflow-hidden h-[650dvh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow dark:bg-[#121212] bg-gray-50">
+                  <RenderFollowerFollowing
+                    defaultTab="follower"
+                    followerList={fetchedUserData.followers}
+                    followingList={fetchedUserData.following}
+                  />
+                  <DialogFooter>
+                    <div className=" flex justify-end w-full">
+                      <DialogClose asChild>
+                        <Button
+                          type="button"
+                          aria-label="Close"
+                          className="w-full"
+                        >
+                          Cancel
+                        </Button>
+                      </DialogClose>
+                    </div>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger>
+                  <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline rounded-sm hover:bg-slate-500/10">
+                    <span className=" sm:text-5xl text-2xl">
+                      {fetchedUserData.followingCount}
+                    </span>
+                    <span className=" dark:text-gray-50/70">following</span>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="fixed ease-in-out flex flex-col gap-2 left-1/2 top-1/2 sm:max-h-[65dvh] max-h-[65dvh] overflow-hidden h-[650dvh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow dark:bg-[#121212] bg-gray-50">
+                  <RenderFollowerFollowing
+                    defaultTab="following"
+                    followerList={fetchedUserData.followers}
+                    followingList={fetchedUserData.following}
+                  />
+                  <DialogFooter>
+                    <div className=" flex justify-end w-full">
+                      <DialogClose asChild>
+                        <Button
+                          type="button"
+                          aria-label="Close"
+                          className="w-full"
+                        >
+                          Cancel
+                        </Button>
+                      </DialogClose>
+                    </div>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
             <div>
               <span className=" sm:text-2xl text-lg">
@@ -321,24 +500,24 @@ const Page = async ({ params }: PageProps) => {
           </div>
         </div>
         <div className=" w-full mt-10">
-          <Tabs.Root defaultValue="posts">
-            <Tabs.List>
-              <Tabs.Trigger value="posts">Posts</Tabs.Trigger>
+          <Tabs defaultValue="posts">
+            <TabsList>
+              <TabsTrigger value="posts">Posts</TabsTrigger>
               {fetchedUserData.about.length > 0 && (
-                <Tabs.Trigger value="about">About</Tabs.Trigger>
+                <TabsTrigger value="about">About</TabsTrigger>
               )}
-            </Tabs.List>
+            </TabsList>
 
-            <Box pt="4">
-              <Tabs.Content value="posts">
+            <div className=" pt-4">
+              <TabsContent value="posts">
                 <UserPost userid={fetchedUserData._id} />
-              </Tabs.Content>
+              </TabsContent>
 
-              <Tabs.Content value="about">
-                <Text size="2">{fetchedUserData.about}</Text>
-              </Tabs.Content>
-            </Box>
-          </Tabs.Root>
+              <TabsContent value="about">
+                <p className=" text-sm">{fetchedUserData.about}</p>
+              </TabsContent>
+            </div>
+          </Tabs>
         </div>
       </div>
     </div>

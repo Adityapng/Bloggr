@@ -12,15 +12,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-// import UserPost from "../[username]/FetchPost";
-import { Box, Tabs, Text } from "@radix-ui/themes";
 import EditProfile from "./editProfile";
 import { Link2 } from "lucide-react";
 import {
+  UserArchivedPost,
   UserBookmarkedPost,
+  UserDraftedPost,
   UserLikedPost,
   UserPost,
 } from "../[username]/FetchPost";
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ReadMoreProps {
   children: string;
@@ -42,7 +52,15 @@ interface ExternalLinkProp {
 //   params: { [key: string]: string };
 // }
 
-export interface FetchedData {
+interface FollowerFollowingList {
+  _id: string;
+  avatarURL: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+}
+
+interface FetchedData {
   _id: string;
   username: string;
   avatarURL: string;
@@ -51,6 +69,8 @@ export interface FetchedData {
   fullName: string;
   firstName: string;
   lastName: string;
+  followers: FollowerFollowingList[];
+  following: FollowerFollowingList[];
   followerCount: number;
   followingCount: number;
   totalReads: number;
@@ -59,6 +79,13 @@ export interface FetchedData {
   externalLinks: string[];
   about: string;
 }
+
+type RenderFollowerFollowingProps = {
+  defaultTab: string;
+
+  followerList: FollowerFollowingList[];
+  followingList: FollowerFollowingList[];
+};
 
 const mockdata = {
   _id: "65fa8def91348f349619b563",
@@ -71,6 +98,8 @@ const mockdata = {
   followerCount: 150,
   followingCount: 75,
   totalReads: 1200,
+  followers: [],
+  following: [],
   instagramLink: "https://instagram.com/johndoe",
   twitterLink: "https://twitter.com/johndoe",
   externalLinks: ["https://github.com/johndoe", "https://johndoe.com"],
@@ -84,6 +113,14 @@ const getInitials = (user: FetchedData): string => {
   }
   const firstNameInitial = user.firstName ? user.firstName[0] : "";
   const lastNameInitial = user.lastName ? user.lastName[0] : "";
+  return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
+};
+
+const getInitialsFromFirstnameAndLastname = (
+  user: FollowerFollowingList
+): string => {
+  const firstNameInitial = user?.firstName ? user?.firstName[0] : "";
+  const lastNameInitial = user?.lastName ? user?.lastName[0] : "";
   return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
 };
 
@@ -234,6 +271,104 @@ const Page = async () => {
     );
   }
 
+  const RenderFollowerFollowing: React.FC<RenderFollowerFollowingProps> = ({
+    defaultTab,
+    followerList,
+    followingList,
+  }) => {
+    return (
+      <Tabs defaultValue={defaultTab}>
+        <TabsList className="flex w-full border-b border-border">
+          <TabsTrigger
+            className="w-1/2 py-2 text-center text-muted-foreground radix-state-active:text-foreground radix-state-active:border-b-2 radix-state-active:border-primary transition"
+            value="follower"
+          >
+            {followerList.length > 1 ? "Followers" : "Follower"}
+          </TabsTrigger>
+
+          <TabsTrigger
+            value="following"
+            className="w-1/2 py-2 text-center text-muted-foreground radix-state-active:text-foreground radix-state-active:border-b-2 radix-state-active:border-primary transition"
+          >
+            Following
+          </TabsTrigger>
+        </TabsList>
+
+        <div className=" pt-4">
+          <TabsContent value="follower">
+            <ScrollArea
+              className={`h-[calc(65dvh-130px)] w-fullscroll-smooth py-1`}
+            >
+              <div className=" w-full flex flex-col gap-3 ">
+                {followerList.map((user: FollowerFollowingList) => (
+                  <div key={user._id} className=" flex justify-between">
+                    <div className="flex gap-4 items-center">
+                      <Avatar className=" size-10 ">
+                        <AvatarImage
+                          className=" select-none"
+                          src={user?.avatarURL}
+                        />
+                        <AvatarFallback className=" bg-amber-300 text-sm">
+                          {getInitialsFromFirstnameAndLastname(user)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className=" flex flex-col justify-around">
+                        <span className=" text-sm">{user?.username}</span>{" "}
+                        <small className=" capitalize text-xs text-gray-400">
+                          {`${user?.firstName} ${user.lastName}`}
+                        </small>
+                      </div>
+                    </div>
+                    <div>
+                      <Button variant="outline" size="sm">
+                        following
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="following">
+            <ScrollArea
+              className={`h-[calc(65dvh-130px)] w-fullscroll-smooth py-1`}
+            >
+              <div className=" w-full flex flex-col gap-3 ">
+                {followingList.map((user: FollowerFollowingList) => (
+                  <div key={user._id} className=" flex justify-between">
+                    <div className="flex gap-4 items-center">
+                      <Avatar className=" size-10 ">
+                        <AvatarImage
+                          className=" select-none"
+                          src={user?.avatarURL}
+                        />
+                        <AvatarFallback className=" bg-amber-300 text-sm">
+                          {getInitialsFromFirstnameAndLastname(user)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className=" flex flex-col justify-around">
+                        <span className=" text-sm">{user?.username}</span>{" "}
+                        <small className=" capitalize text-xs text-gray-400">
+                          {`${user?.firstName} ${user.lastName}`}
+                        </small>
+                      </div>
+                    </div>
+                    <div>
+                      <Button variant="outline" size="sm">
+                        following
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+        </div>
+      </Tabs>
+    );
+  };
+
   return (
     <div className=" w-full flex justify-center">
       <div className=" w-full lg:w-5/6  max-sm:p-4 max-w-7xl p-16">
@@ -266,20 +401,72 @@ const Page = async () => {
                 </span>
                 <span className=" text-gray-50/70">reads</span>
               </div>
-              <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline">
-                <span className=" sm:text-5xl text-2xl">
-                  {fetchedUserData.followerCount}
-                </span>
-                <span className=" text-gray-50/70">
-                  {fetchedUserData.followerCount > 1 ? "followers" : "follower"}
-                </span>
-              </div>
-              <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline">
-                <span className=" sm:text-5xl text-2xl">
-                  {fetchedUserData.followingCount}
-                </span>
-                <span className=" text-gray-50/70">following</span>
-              </div>
+
+              <Dialog>
+                <DialogTrigger>
+                  <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline rounded-sm hover:bg-slate-500/10">
+                    <span className=" sm:text-5xl text-2xl">
+                      {fetchedUserData.followerCount}
+                    </span>
+                    <span className=" text-gray-50/70">
+                      {fetchedUserData.followerCount > 1
+                        ? "followers"
+                        : "follower"}
+                    </span>
+                  </div>
+                </DialogTrigger>
+                <DialogContent>
+                  <RenderFollowerFollowing
+                    defaultTab="follower"
+                    followerList={fetchedUserData.followers}
+                    followingList={fetchedUserData.following}
+                  />
+                  <DialogFooter>
+                    <div className=" flex justify-end w-full">
+                      <DialogClose asChild>
+                        <Button
+                          type="button"
+                          aria-label="Close"
+                          className="w-full"
+                        >
+                          Cancel
+                        </Button>
+                      </DialogClose>
+                    </div>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger>
+                  <div className=" sm:px-1.5 flex flex-wrap justify-center gap-1 items-baseline rounded-sm hover:bg-slate-500/10">
+                    <span className=" sm:text-5xl text-2xl">
+                      {fetchedUserData.followingCount}
+                    </span>
+                    <span className=" text-gray-50/70">following</span>
+                  </div>
+                </DialogTrigger>
+                <DialogContent>
+                  <RenderFollowerFollowing
+                    defaultTab="following"
+                    followerList={fetchedUserData.followers}
+                    followingList={fetchedUserData.following}
+                  />
+                  <DialogFooter>
+                    <div className=" flex justify-end w-full">
+                      <DialogClose asChild>
+                        <Button
+                          type="button"
+                          aria-label="Close"
+                          className="w-full"
+                        >
+                          Cancel
+                        </Button>
+                      </DialogClose>
+                    </div>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
             <div>
               <span className=" sm:text-2xl text-lg">
@@ -332,27 +519,35 @@ const Page = async () => {
           </div>
         </div>
         <div className=" w-full mt-10">
-          <Tabs.Root defaultValue="posts">
-            <Tabs.List>
-              <Tabs.Trigger value="posts">Posts</Tabs.Trigger>
-              <Tabs.Trigger value="liked">Liked posts</Tabs.Trigger>
-              <Tabs.Trigger value="bookmarked">Bookmarked</Tabs.Trigger>
-              <Tabs.Trigger value="about">About</Tabs.Trigger>
-            </Tabs.List>
+          <Tabs defaultValue="posts">
+            <TabsList>
+              <TabsTrigger value="posts">Posts</TabsTrigger>
+              <TabsTrigger value="liked">Liked posts</TabsTrigger>
+              <TabsTrigger value="bookmarked">Bookmarked</TabsTrigger>
+              <TabsTrigger value="drafts">Draft</TabsTrigger>
+              <TabsTrigger value="archive">Archive</TabsTrigger>
+              <TabsTrigger value="about">About</TabsTrigger>
+            </TabsList>
 
-            <Box pt="4">
-              <Tabs.Content value="posts">
+            <div className=" pt-4">
+              <TabsContent value="posts">
                 <UserPost userid={fetchedUserData._id} />
-              </Tabs.Content>
-              <Tabs.Content value="liked">
+              </TabsContent>
+              <TabsContent value="liked">
                 <UserLikedPost />
-              </Tabs.Content>
-              <Tabs.Content value="bookmarked">
+              </TabsContent>
+              <TabsContent value="bookmarked">
                 <UserBookmarkedPost />
-              </Tabs.Content>
+              </TabsContent>
+              <TabsContent value="drafts">
+                <UserDraftedPost />
+              </TabsContent>
+              <TabsContent value="archive">
+                <UserArchivedPost />
+              </TabsContent>
 
-              <Tabs.Content value="about">
-                <Text size="2">
+              <TabsContent value="about">
+                <div>
                   {fetchedUserData.about.length == 0 ? (
                     <div className=" w-full h-96 flex items-center justify-center">
                       <p>About not added, go to edit profile to add About</p>
@@ -360,10 +555,10 @@ const Page = async () => {
                   ) : (
                     fetchedUserData.about
                   )}
-                </Text>
-              </Tabs.Content>
-            </Box>
-          </Tabs.Root>
+                </div>
+              </TabsContent>
+            </div>
+          </Tabs>
         </div>
       </div>
     </div>

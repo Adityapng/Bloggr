@@ -31,5 +31,15 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    typography,
+    // ✅ ADD THIS PLUGIN FUNCTION
+    function ({ addVariant }) {
+      addVariant("radix-state-active", '&[data-state="active"]');
+      addVariant("radix-state-inactive", '&[data-state="inactive"]');
+      addVariant("radix-state-open", '&[data-state="open"]');
+      addVariant("radix-state-closed", '&[data-state="closed"]');
+      // You can add more for other Radix states like 'checked', 'unchecked', 'on', 'off'
+    },
+  ],
 };

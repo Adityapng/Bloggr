@@ -305,7 +305,7 @@ const EditProfile = ({ userdata }: EditProfileProps) => {
           </DialogTrigger>
           <DialogContent className="fixed ease-in-out flex flex-col gap-2 left-1/2 top-1/2 sm:max-h-[95dvh] max-h-[90dvh] overflow-hidden h-[90dvh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray1 p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow dark:bg-[#121212] bg-gray-50">
             <DialogHeader>
-              <DialogTitle className="m-0 text-[17px] font-medium text-mauve12">
+              <DialogTitle className="m-0 text-[17px] font-medium ">
                 Edit profile
               </DialogTitle>
               <DialogDescription>

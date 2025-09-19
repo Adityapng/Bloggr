@@ -10,6 +10,8 @@ import { Tags, X } from "lucide-react";
 import { CloudinaryUploadResult } from "@/lib/cloudinaryUpload";
 import { apiFetcher } from "@/lib/apiFetcher";
 import { Spinner } from "@/components/ui/spinner";
+import { useSession } from "@/components/auth/SessionProvider";
+import { toast } from "sonner";
 
 export default function WritePage() {
   const router = useRouter();
@@ -31,28 +33,15 @@ export default function WritePage() {
   const [areTagsLoading, setAreTagsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
+  const session = useSession();
+
   useEffect(() => {
-    async function checkauth() {
-      try {
-        const response = await apiFetcher("/");
-        const data = await response.json();
-        if (data.isLoggedIn === true) {
-          console.log(data.isLoggedIn);
-
-          setIsAuthenticated(true);
-        } else {
-          console.log(data.isLoggedIn);
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.log(error, "this is error msg");
-
-        setIsAuthenticated(false);
-      }
+    if (session.isLoggedIn === true) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
     }
-
-    checkauth();
-  }, []);
+  }, [session.isLoggedIn]);
 
   const MAX_WORDS = 10000;
 
@@ -113,8 +102,13 @@ export default function WritePage() {
   };
 
   const handleCreatePost = async (postStatus: string) => {
-    setIsLoading(true);
     setError(null);
+    if (!title || !content || !uploadedImages[0]) {
+      setError(
+        "All the fields are required and atleast one photo is required for cover photo"
+      );
+      return;
+    }
 
     if (selectedTags.length == 0) {
       setError("Atleast one tag is required");
@@ -127,6 +121,8 @@ export default function WritePage() {
       );
       return;
     }
+
+    setIsLoading(true);
 
     const coverimageurl =
       (uploadedImages[0] && uploadedImages[0].secure_url) || "";
@@ -152,6 +148,8 @@ export default function WritePage() {
       }
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Failed to create post.");
+
+      toast("Event has been created.");
 
       if (postStatus === "published") {
         router.push(`/posts/${data.slug}`);
@@ -220,6 +218,7 @@ export default function WritePage() {
               type="text"
               onChange={(e) => setTitle(e.target.value)}
               onFocus={(e) => e.stopPropagation()}
+              value={title}
               disabled={isLoading}
             />
             <div className="relative  w-full border rounded-lg overflow-hidden">
@@ -227,7 +226,7 @@ export default function WritePage() {
                 onUpdate={setContent}
                 onImageUpload={handleImageUploadCallback}
                 onWordCountChange={setWordCount}
-                initialContent=""
+                initialContent={content}
               />
             </div>
 

@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { Theme } from "@radix-ui/themes";
 import { SessionProvider } from "@/components/auth/SessionProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const notoSans = Noto_Sans({
   subsets: ["latin"],
@@ -61,6 +62,7 @@ export default async function RootLayout({
               <Navbar />
             </header>{" "}
             <Theme accentColor="gray">{children}</Theme>
+            <Toaster />
           </ThemeProvider>
         </SessionProvider>
       </body>
