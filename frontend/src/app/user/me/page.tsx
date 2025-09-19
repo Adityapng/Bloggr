@@ -60,7 +60,7 @@ interface FollowerFollowingList {
   username: string;
 }
 
-interface FetchedData {
+export interface FetchedData {
   _id: string;
   username: string;
   avatarURL: string;
