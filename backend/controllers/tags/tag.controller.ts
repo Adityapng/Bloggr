@@ -22,6 +22,6 @@ export const getAllTagsCategorized = async (req: Request, res: Response) => {
     res.status(200).json(categorizedTags);
   } catch (error) {
     console.error("Failed to fetch tags:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error", details: (error as Error).message });
   }
 };
