@@ -49,7 +49,7 @@ export default function HomePage() {
 
         if (!response.ok) {
           console.error(
-            "FRONTEND: Response not OK. Status:",
+            "FRONTEND: Fetch Post Response not OK. Status:",
             response.status,
             response.statusText
           );
@@ -209,7 +209,7 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="space-y-10 w-full flex flex-col items-center">
-                {posts.length > 0 ? (
+                {posts && posts.length > 0 ? (
                   posts.map((data) => {
                     return (
                       <div

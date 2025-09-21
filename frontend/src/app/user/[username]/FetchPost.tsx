@@ -272,7 +272,7 @@ export function UserPost({ userid }: UserPostFeedProps) {
         </div>
       ) : (
         <div className="space-y-10 w-full flex flex-col items-center">
-          {posts.length === 0 ? (
+          {posts && posts.length === 0 ? (
             <NoPostInformation />
           ) : (
             posts.map((data) => {
@@ -538,7 +538,7 @@ export function UserBookmarkedPost() {
         </div>
       ) : (
         <div className="space-y-10 w-full flex flex-col items-center">
-          {posts.length === 0 ? (
+          {posts && posts.length === 0 ? (
             <div className="w-full flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
               <div className="text-5xl mb-4">🔖</div>
               <h2 className="text-2xl font-semibold mb-2">No bookmarks yet</h2>
@@ -736,7 +736,7 @@ export function UserLikedPost() {
         </div>
       ) : (
         <div className="space-y-10 w-full flex flex-col items-center">
-          {posts.length === 0 ? (
+          {posts && posts.length === 0 ? (
             <div className="w-full flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
               <div className="text-5xl mb-4">❤️</div>
               <h2 className="text-2xl font-semibold mb-2">No likes yet</h2>
@@ -994,7 +994,7 @@ export function UserDraftedPost() {
         </div>
       ) : (
         <div className="space-y-10 w-full flex flex-col items-center">
-          {posts.length === 0 ? (
+          {posts && posts.length === 0 ? (
             <div className="w-full flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
               <div className="text-5xl mb-4">🔖</div>
               <h2 className="text-2xl font-semibold mb-2">
@@ -1333,7 +1333,7 @@ export function UserArchivedPost() {
         </div>
       ) : (
         <div className="space-y-10 w-full flex flex-col items-center">
-          {posts.length === 0 ? (
+          {posts && posts.length === 0 ? (
             <div className="w-full flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
               <div className="text-5xl mb-4">🔖</div>
               <h2 className="text-2xl font-semibold mb-2">

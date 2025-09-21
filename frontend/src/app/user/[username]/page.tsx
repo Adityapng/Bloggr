@@ -264,7 +264,7 @@ const Page = async ({ params }: PageProps) => {
             className="w-1/2 py-2 text-center text-muted-foreground radix-state-active:text-foreground radix-state-active:border-b-2 radix-state-active:border-primary transition"
             value="follower"
           >
-            {followerList.length > 1 ? "Followers" : "Follower"}
+            {followerList && followerList.length > 1 ? "Followers" : "Follower"}
           </TabsTrigger>
 
           <TabsTrigger
