@@ -12,7 +12,6 @@ const postLikeHandeller = async (req: Request, res: Response) => {
     if (!userid) {
       return res.status(400).json({ error: "Login to like a post" });
     }
-    await connectDB();
 
     const post = await Post.findById(postid);
 
@@ -51,7 +50,6 @@ const bookmarkHandeller = async (req: Request, res: Response) => {
     if (!userid) {
       return res.status(400).json({ error: "Login to bookmark a post" });
     }
-    await connectDB();
     const post = await Post.findById(postid);
 
     if (!post) {
@@ -90,7 +88,6 @@ const commentHandeller = async (req: Request, res: Response) => {
     if (!userid) {
       return res.status(400).json({ error: "Login to comment on a post" });
     }
-    await connectDB();
 
     const post = await Post.findById(postid);
 
@@ -126,7 +123,6 @@ const getComment = async (req: Request, res: Response) => {
   try {
     const { postid } = req.params;
     const { limit } = req.query;
-    await connectDB();
     const comments = await Comment.find({ post: postid })
       .sort({ createdAt: -1 })
       .limit(Number(limit))
@@ -148,7 +144,6 @@ const CommentLikeHandeller = async (req: Request, res: Response) => {
     if (!userid) {
       return res.status(400).json({ error: "Login to like a comment" });
     }
-    await connectDB();
     const comment = await Comment.findById(commentid);
 
     if (!comment) {

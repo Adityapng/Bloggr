@@ -10,7 +10,6 @@ const handleUserSignup = async (req: Request, res: Response) => {
     if (!firstName || !lastName || !email || !username || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
-    await connectDB();
 
     const existingEmail = await User.findOne({ email: email.toLowerCase() });
     if (existingEmail) {

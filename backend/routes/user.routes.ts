@@ -17,8 +17,11 @@ import {
   handleDeletePost,
 } from "../controllers/user.controller";
 import { followController } from "../controllers/user/followRelationship.controller";
+import { ensureDatabaseConnection } from "../middleware/databaseConnection";
 
 const userRoutes = Router();
+
+userRoutes.use(ensureDatabaseConnection);
 
 userRoutes.patch(
   "/profile/avatar",

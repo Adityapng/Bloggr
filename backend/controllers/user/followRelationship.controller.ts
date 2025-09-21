@@ -5,7 +5,6 @@ import connectDB from "../../config/connection";
 
 export const followController = {
   follow: async (req: Request, res: Response) => {
-    await connectDB();
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -45,7 +44,6 @@ export const followController = {
   },
 
   unfollow: async (req: Request, res: Response) => {
-    await connectDB();
     const session = await mongoose.startSession();
     session.startTransaction();
 

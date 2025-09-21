@@ -15,7 +15,6 @@ const handleUserSignin = async (req: Request, res: Response) => {
     }
     const lowerCaseLoginID = (username || email).toLowerCase();
 
-    await connectDB();
     // console.log("🔍 Looking for user:", lowerCaseLoginID);
 
     const user = await User.findOne({

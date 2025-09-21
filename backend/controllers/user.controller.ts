@@ -9,8 +9,6 @@ const deleteUserAvatarFromDB = async (req: Request, res: Response) => {
   try {
     const userID = req.user.userid;
 
-    await connectDB();
-
     const user = await User.findOneAndUpdate(
       { _id: userID },
       { $set: { profilePicturePublicID: "", avatarURL: "" } },
@@ -53,7 +51,6 @@ const deleteUserAvatarFromCloudinary = async (req: Request, res: Response) => {
 const getUserProfile = async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
-    await connectDB();
     const requestedUserId = await User.findOne({ username: username }).select(
       "_id"
     );
@@ -97,7 +94,6 @@ const getUserProfile = async (req: Request, res: Response) => {
 const getUserPosts = async (req: Request, res: Response) => {
   try {
     const { userid } = req.params;
-    await connectDB();
     const posts = await Post.find({ author: userid, status: "published" })
       .sort({ createdAt: -1 })
       .populate("author", "username firstName lastName avatarUrl");
@@ -111,7 +107,6 @@ const getUserPosts = async (req: Request, res: Response) => {
 const getUserBookmarkedPosts = async (req: Request, res: Response) => {
   try {
     const { userid } = req.user;
-    await connectDB();
     const posts = await Post.find({ bookmarks: { $in: userid } })
       .sort({ createdAt: -1 })
       .populate("author", "username firstName lastName avatarUrl");
@@ -125,7 +120,6 @@ const getUserBookmarkedPosts = async (req: Request, res: Response) => {
 const getUserLikedPosts = async (req: Request, res: Response) => {
   try {
     const { userid } = req.user;
-    await connectDB();
 
     const posts = await Post.find({ likes: { $in: userid } })
       .sort({ createdAt: -1 })
@@ -140,7 +134,6 @@ const getUserLikedPosts = async (req: Request, res: Response) => {
 const getUserDraftedPosts = async (req: Request, res: Response) => {
   try {
     const { userid } = req.user;
-    await connectDB();
 
     const posts = await Post.find({ author: userid, status: "draft" })
       .sort({ createdAt: -1 })
@@ -154,7 +147,6 @@ const getUserDraftedPosts = async (req: Request, res: Response) => {
 const getUserArchivedPosts = async (req: Request, res: Response) => {
   try {
     const { userid } = req.user;
-    await connectDB();
 
     const posts = await Post.find({ author: userid, status: "archived" })
       .sort({ createdAt: -1 })
@@ -281,7 +273,6 @@ const getCurrectAuthenticatedUserDetails = async (
 ) => {
   try {
     const userid = req.user.userid;
-    await connectDB();
     const objectUserId = mongoose.Types.ObjectId.createFromHexString(userid);
     const results = await Post.aggregate([
       {
@@ -323,8 +314,6 @@ const updateUserProfile = async (req: Request, res: Response) => {
     const userId = req.user.userid;
     const updates = req.body;
 
-    await connectDB();
-
     const updatedUser = await User.findByIdAndUpdate(userId, updates, {
       new: true,
       runValidators: true,
@@ -346,7 +335,6 @@ const updateUserProfile = async (req: Request, res: Response) => {
 const getFollowStatus = async (req: Request, res: Response) => {
   const userid = req.user.userid;
   const { targetId } = req.params;
-  await connectDB();
 
   try {
     const isFollowing = !!(await User.exists({

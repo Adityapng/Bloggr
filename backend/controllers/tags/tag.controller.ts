@@ -4,7 +4,6 @@ import connectDB from "../../config/connection";
 
 export const getAllTagsCategorized = async (req: Request, res: Response) => {
   try {
-    await connectDB();
     const allTags = await Tag.find({}).sort({ category: 1, name: 1 });
 
     const categorizedTags = allTags.reduce((acc, tag) => {
@@ -22,6 +21,11 @@ export const getAllTagsCategorized = async (req: Request, res: Response) => {
     res.status(200).json(categorizedTags);
   } catch (error) {
     console.error("Failed to fetch tags:", error);
-    res.status(500).json({ error: "Internal server error", details: (error as Error).message });
+    res
+      .status(500)
+      .json({
+        error: "Internal server error",
+        details: (error as Error).message,
+      });
   }
 };
