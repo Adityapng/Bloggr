@@ -1,104 +1,54 @@
-// config/connection.ts
 import mongoose from "mongoose";
 
-class DatabaseConnection {
-  private static instance: DatabaseConnection;
-  private isConnected: boolean = false;
+const MONGO_URI = process.env.MONGO_URI;
 
-  private constructor() {}
-
-  public static getInstance(): DatabaseConnection {
-    if (!DatabaseConnection.instance) {
-      DatabaseConnection.instance = new DatabaseConnection();
-    }
-    return DatabaseConnection.instance;
-  }
-
-  public async connect(): Promise<void> {
-    if (this.isConnected) {
-      console.log("Database already connected");
-      return;
-    }
-
-    try {
-      const mongoURI = process.env.MONGO_URI;
-
-      if (!mongoURI) {
-        throw new Error("MONGO_URI environment variable is not defined");
-      }
-
-      const options = {
-        maxPoolSize: 10, // Maximum number of connections in the pool
-        serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-        socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-        bufferCommands: false, // Disable mongoose buffering
-        serverApi: {
-          version: "1" as const,
-          strict: true,
-          deprecationErrors: true,
-        },
-      };
-
-      await mongoose.connect(mongoURI, options);
-
-      // Test connection
-      if (mongoose.connection.readyState === 1 && mongoose.connection.db) {
-        await mongoose.connection.db.admin().ping();
-        console.log("MongoDB connected and health check passed");
-      } else {
-        throw new Error("Database connection not properly established");
-      }
-
-      this.isConnected = true;
-      console.log("MongoDB connected successfully");
-
-      // Handle connection events
-      mongoose.connection.on("error", (error) => {
-        console.error("MongoDB connection error:", error);
-        this.isConnected = false;
-      });
-
-      mongoose.connection.on("disconnected", () => {
-        console.log("MongoDB disconnected");
-        this.isConnected = false;
-      });
-
-      mongoose.connection.on("reconnected", () => {
-        console.log("MongoDB reconnected");
-        this.isConnected = true;
-      });
-    } catch (error) {
-      console.error("Failed to connect to MongoDB:", error);
-      this.isConnected = false;
-      throw error;
-    }
-  }
-
-  public async disconnect(): Promise<void> {
-    if (!this.isConnected) {
-      return;
-    }
-
-    try {
-      await mongoose.disconnect();
-      this.isConnected = false;
-      console.log("MongoDB disconnected gracefully");
-    } catch (error) {
-      console.error("Error disconnecting from MongoDB:", error);
-      throw error;
-    }
-  }
-
-  public getConnectionStatus(): boolean {
-    return this.isConnected && mongoose.connection.readyState === 1;
-  }
+if (!MONGO_URI) {
+  throw new Error("Please define the MONGO_URI environment variable");
 }
 
-// Simple function interface for backward compatibility
-const connectDB = async (): Promise<void> => {
-  const dbConnection = DatabaseConnection.getInstance();
-  await dbConnection.connect();
+// Attach the Mongoose connection cache to the global object.
+// This is the most reliable way to persist state across serverless invocations.
+let globalWithMongoose = global as typeof globalThis & {
+  mongoose: {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+  };
 };
 
+let cached = globalWithMongoose.mongoose;
+
+if (!cached) {
+  cached = globalWithMongoose.mongoose = { conn: null, promise: null };
+}
+
+async function connectDB() {
+  if (cached.conn) {
+    console.log("✅ Using cached database connection.");
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+    };
+
+    console.log(" Mongoose is establishing a new connection...");
+    cached.promise = mongoose
+      .connect(MONGO_URI as string, opts)
+      .then((mongooseInstance) => {
+        console.log(" Mongoose connected successfully.");
+        return mongooseInstance;
+      });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null; // Reset the promise on failure
+    throw e;
+  }
+
+  return cached.conn;
+}
+
 export default connectDB;
-export { DatabaseConnection };

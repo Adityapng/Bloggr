@@ -12,11 +12,11 @@ import {
   CommentLikeHandeller,
 } from "../controllers/post/postInteraction.controller";
 import authenticateUserToken from "../middleware/authenticateUserToken";
-import { ensureDatabaseConnection } from "../middleware/databaseConnection";
+// import { ensureDatabaseConnection } from "../middleware/databaseConnection";
 
 const postRoutes = Router();
 
-postRoutes.use(ensureDatabaseConnection);
+// postRoutes.use(ensureDatabaseConnection);
 
 postRoutes.get("/", getAllPost);
 postRoutes.get("/:slug", getPostBySlug);

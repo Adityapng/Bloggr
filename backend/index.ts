@@ -9,7 +9,7 @@ import apiRoutes from "./routes/api.routes";
 import homeRoutes from "./routes/home.routes";
 import configureCloudinary from "./config/cloudinary";
 import { ensureSessionIdentifier } from "./middleware/ensureSessionIdentifier";
-import { setupGracefulShutdown } from "./config/connectionShutdown";
+// import { setupGracefulShutdown } from "./config/connectionShutdown";
 
 const app = express();
 connectDB()
@@ -57,7 +57,7 @@ if (process.env.NODE_ENV !== "production") {
   const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server started for development at Port ${PORT}`);
   });
-  setupGracefulShutdown(server);
+  // setupGracefulShutdown(server);
 }
 
 export default app;

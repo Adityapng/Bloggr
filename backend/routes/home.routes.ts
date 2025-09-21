@@ -1,10 +1,12 @@
 import { Router, Response, Request } from "express";
 import User from "../models/user.model";
+import connectDB from "../config/connection";
 
 const homeRoutes = Router();
 
 homeRoutes.get("/", async (req: Request, res: Response) => {
   try {
+    await connectDB();
     if (req.user) {
       const currentUser = await User.findById(req.user.userid);
       if (!currentUser) {

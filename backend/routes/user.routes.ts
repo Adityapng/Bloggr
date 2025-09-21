@@ -13,15 +13,16 @@ import {
   getFollowStatus,
   getUserArchivedPosts,
   handleArchivePost,
+  handleMoveToTrash,
   handleUnarchivePost,
   handleDeletePost,
 } from "../controllers/user.controller";
 import { followController } from "../controllers/user/followRelationship.controller";
-import { ensureDatabaseConnection } from "../middleware/databaseConnection";
+// import { ensureDatabaseConnection } from "../middleware/databaseConnection";
 
 const userRoutes = Router();
 
-userRoutes.use(ensureDatabaseConnection);
+// userRoutes.use(ensureDatabaseConnection);
 
 userRoutes.patch(
   "/profile/avatar",
@@ -70,7 +71,7 @@ userRoutes.patch(
 userRoutes.patch(
   "/me/post/:postid/move-to-trash",
   authenticateUserToken,
-  handleUnarchivePost
+  handleMoveToTrash
 );
 userRoutes.delete(
   "/me/post/:postid/delete",

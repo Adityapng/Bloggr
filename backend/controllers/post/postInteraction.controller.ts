@@ -6,6 +6,7 @@ import connectDB from "../../config/connection";
 
 const postLikeHandeller = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { postid } = req.params;
     const userid = req.user.userid;
 
@@ -44,6 +45,7 @@ const postLikeHandeller = async (req: Request, res: Response) => {
 
 const bookmarkHandeller = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { postid } = req.params;
     const userid = req.user.userid;
 
@@ -81,6 +83,7 @@ const bookmarkHandeller = async (req: Request, res: Response) => {
 
 const commentHandeller = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { postid } = req.params;
     const { content } = req.body;
     const { userid } = req.user;
@@ -121,6 +124,7 @@ const commentHandeller = async (req: Request, res: Response) => {
 
 const getComment = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { postid } = req.params;
     const { limit } = req.query;
     const comments = await Comment.find({ post: postid })
@@ -138,6 +142,7 @@ const getComment = async (req: Request, res: Response) => {
 
 const CommentLikeHandeller = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { commentid } = req.params;
     const userid = req.user.userid;
 

@@ -6,6 +6,7 @@ import connectDB from "../../config/connection";
 
 export const getAllPost = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const page = parseInt((req.query.page as string) || "1");
     const categoryFilter = req.query.filter as string;
 
@@ -108,6 +109,7 @@ const incrementAnonViewCount = async (
 
 export const getPostBySlug = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { slug } = req.params;
     const requesterId = req.sessionId || null;
 
@@ -138,6 +140,7 @@ export const getPostBySlug = async (req: Request, res: Response) => {
 
 export const createPost = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const {
       title,
       content,

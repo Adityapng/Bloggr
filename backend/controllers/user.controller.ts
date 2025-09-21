@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 const deleteUserAvatarFromDB = async (req: Request, res: Response) => {
   // const cloudinary = require("cloudinary").v2;
   try {
+    await connectDB();
     const userID = req.user.userid;
 
     const user = await User.findOneAndUpdate(
@@ -50,6 +51,7 @@ const deleteUserAvatarFromCloudinary = async (req: Request, res: Response) => {
 
 const getUserProfile = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { username } = req.params;
     const requestedUserId = await User.findOne({ username: username }).select(
       "_id"
@@ -93,6 +95,7 @@ const getUserProfile = async (req: Request, res: Response) => {
 
 const getUserPosts = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { userid } = req.params;
     const posts = await Post.find({ author: userid, status: "published" })
       .sort({ createdAt: -1 })
@@ -106,6 +109,7 @@ const getUserPosts = async (req: Request, res: Response) => {
 
 const getUserBookmarkedPosts = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { userid } = req.user;
     const posts = await Post.find({ bookmarks: { $in: userid } })
       .sort({ createdAt: -1 })
@@ -119,6 +123,7 @@ const getUserBookmarkedPosts = async (req: Request, res: Response) => {
 
 const getUserLikedPosts = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { userid } = req.user;
 
     const posts = await Post.find({ likes: { $in: userid } })
@@ -133,6 +138,7 @@ const getUserLikedPosts = async (req: Request, res: Response) => {
 
 const getUserDraftedPosts = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { userid } = req.user;
 
     const posts = await Post.find({ author: userid, status: "draft" })
@@ -146,6 +152,7 @@ const getUserDraftedPosts = async (req: Request, res: Response) => {
 };
 const getUserArchivedPosts = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { userid } = req.user;
 
     const posts = await Post.find({ author: userid, status: "archived" })
@@ -159,6 +166,7 @@ const getUserArchivedPosts = async (req: Request, res: Response) => {
 };
 const handleArchivePost = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { postid } = req.params;
     const userid = req.user?.userid; // Make sure this exists
 
@@ -187,6 +195,7 @@ const handleArchivePost = async (req: Request, res: Response) => {
 
 const handleUnarchivePost = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { postid } = req.params;
     const userid = req.user?.userid; // Make sure this exists
 
@@ -215,6 +224,7 @@ const handleUnarchivePost = async (req: Request, res: Response) => {
 
 const handleMoveToTrash = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { postid } = req.params;
 
     if (!postid) {
@@ -242,6 +252,7 @@ const handleMoveToTrash = async (req: Request, res: Response) => {
 
 const handleDeletePost = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { postid } = req.params;
 
     if (!postid) {
@@ -272,6 +283,7 @@ const getCurrectAuthenticatedUserDetails = async (
   res: Response
 ) => {
   try {
+    await connectDB();
     const userid = req.user.userid;
     const objectUserId = mongoose.Types.ObjectId.createFromHexString(userid);
     const results = await Post.aggregate([
@@ -311,6 +323,7 @@ const getCurrectAuthenticatedUserDetails = async (
 
 const updateUserProfile = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const userId = req.user.userid;
     const updates = req.body;
 
@@ -337,6 +350,7 @@ const getFollowStatus = async (req: Request, res: Response) => {
   const { targetId } = req.params;
 
   try {
+    await connectDB();
     const isFollowing = !!(await User.exists({
       _id: targetId,
       followers: userid,

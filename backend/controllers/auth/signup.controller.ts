@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 
 const handleUserSignup = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     const { firstName, lastName, email, username, password } = req.body;
 
     if (!firstName || !lastName || !email || !username || !password) {

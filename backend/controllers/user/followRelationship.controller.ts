@@ -9,6 +9,7 @@ export const followController = {
     session.startTransaction();
 
     try {
+      await connectDB();
       const requesterId = req.user.userid;
       const { targetId } = req.params;
       console.log(requesterId);
@@ -48,6 +49,7 @@ export const followController = {
     session.startTransaction();
 
     try {
+      await connectDB();
       const requesterId = req.user.userid;
       const { targetId } = req.params;
 

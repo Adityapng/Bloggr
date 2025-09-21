@@ -6,6 +6,7 @@ import connectDB from "../../config/connection";
 
 const handleUserSignin = async (req: Request, res: Response) => {
   try {
+    await connectDB();
     // console.log("Current NODE_ENV:", process.env.NODE_ENV);
     const { username, email, password } = req.body;
     if (!(username || email) || !password) {
