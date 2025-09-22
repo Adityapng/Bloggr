@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 
 export default function LogoutButton() {
-  const router = useRouter();
+  // const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogout = async () => {
@@ -17,7 +17,7 @@ export default function LogoutButton() {
       });
 
       if (response.ok) {
-        router.refresh();
+        window.location.href = "/";
       } else {
         alert("Logout failed. Please try again.");
       }
