@@ -31,7 +31,8 @@ export default function LogoutButton() {
 
   return (
     <Button
-      // ...
+      className="w-full flex px-2 py-1.5 items-center justify-start"
+      variant="ghost"
       onClick={handleLogout}
       disabled={isLoading}
     >
