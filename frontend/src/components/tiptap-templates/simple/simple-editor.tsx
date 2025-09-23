@@ -12,6 +12,7 @@ import { Typography } from "@tiptap/extension-typography";
 import { Highlight } from "@tiptap/extension-highlight";
 // import { Subscript } from "@tiptap/extension-subscript";
 // import { Superscript } from "@tiptap/extension-superscript";
+// dm,sdm,md,sdmsdms,dm
 import { Selection, Placeholder } from "@tiptap/extensions";
 import { CharacterCount } from "@tiptap/extension-character-count";
 
