@@ -10,8 +10,8 @@ import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { TextAlign } from "@tiptap/extension-text-align";
 import { Typography } from "@tiptap/extension-typography";
 import { Highlight } from "@tiptap/extension-highlight";
-import { Subscript } from "@tiptap/extension-subscript";
-import { Superscript } from "@tiptap/extension-superscript";
+// import { Subscript } from "@tiptap/extension-subscript";
+// import { Superscript } from "@tiptap/extension-superscript";
 import { Selection, Placeholder } from "@tiptap/extensions";
 import { CharacterCount } from "@tiptap/extension-character-count";
 
@@ -240,8 +240,8 @@ export function SimpleEditor({
       Highlight.configure({ multicolor: true }),
       Image,
       Typography,
-      Superscript,
-      Subscript,
+      // Superscript,
+      // Subscript,
       Selection,
       ImageUploadNode.configure({
         accept: "image/*",

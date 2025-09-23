@@ -450,7 +450,7 @@ const Page = async ({ params }: PageProps) => {
               </Dialog>
             </div>
             <div>
-              <span className=" sm:text-2xl text-lg">
+              <span className=" sm:text-2xl text-lg capitalize">
                 {fetchedUserData.fullName}
               </span>
             </div>
