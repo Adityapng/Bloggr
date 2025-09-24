@@ -134,12 +134,12 @@ const MainToolbarContent = ({
         {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
       </ToolbarGroup>
 
-      <ToolbarSeparator />
+      {/* <ToolbarSeparator />
 
       <ToolbarGroup>
         <MarkButton type="superscript" />
         <MarkButton type="subscript" />
-      </ToolbarGroup>
+      </ToolbarGroup> */}
 
       <ToolbarSeparator />
 
