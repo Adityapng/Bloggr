@@ -149,7 +149,7 @@ export default function WritePage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Failed to create post.");
 
-      toast("Event has been created.");
+      toast.success("Post created successfully!");
 
       if (postStatus === "published") {
         router.push(`/posts/${data.slug}`);
@@ -248,7 +248,6 @@ export default function WritePage() {
                         type="text"
                         placeholder="Add a tag..."
                         onChange={(e) => handleTagSearch(e.target.value)}
-                        onFocus={(e) => e.stopPropagation()}
                         onTouchStart={(e) => e.stopPropagation()}
                         className={`pl-10`}
                         disabled={isLoading}
@@ -269,20 +268,20 @@ export default function WritePage() {
                     </div>
                   </div>
                   {/* selected tag display section */}
-                  <div className=" flex gap-2 w-full flex-wrap p-4">
+                  <div className=" flex gap-2 w-full flex-wrap py-4">
                     {selectedTags.map((tag) => (
                       <div
-                        className="py-2 px-2  bg-green-700 hover:bg-green-800 rounded-4xl flex items-center gap-2"
+                        className="py-2 px-2  bg-green-700 rounded-4xl flex items-center gap-2"
                         key={`${tag}-selected-tag`}
                       >
-                        <p className=" capitalize"> {tag}</p>
+                        <p className=" capitalize pl-2"> {tag}</p>
                         <button
-                          className="bg-green-700 hover:bg-green-800 rounded-full "
+                          className="bg-green-700 hover:bg-green-800 rounded-full p-2 "
                           onClick={() => {
                             handleRemoveTag(tag);
                           }}
                         >
-                          <X />
+                          <X className=" size-4" />
                         </button>
                       </div>
                     ))}

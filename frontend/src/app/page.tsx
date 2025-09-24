@@ -11,7 +11,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Bookmark, Heart, MessageCircle } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -195,13 +195,12 @@ export default function HomePage() {
                       </div>
 
                       {/* Interaction Bar Skeleton */}
-                      <div className="flex justify-between pt-4">
+                      <div className="flex pt-4">
                         <div className="flex gap-4 text-xs items-center">
                           <Skeleton className="h-4 w-20" />
                           <Skeleton className="h-4 w-12" />
                           <Skeleton className="h-4 w-12" />
                         </div>
-                        <Skeleton className="size-5 rounded-full" />
                       </div>
                     </div>
                   </div>
@@ -225,7 +224,7 @@ export default function HomePage() {
                               <Avatar className=" size-7 ">
                                 <AvatarImage
                                   className=" select-none"
-                                  src={data.author.authorAvatar}
+                                  src={data.author.avatarURL}
                                 />
                                 <AvatarFallback className=" bg-amber-300 text-xs">
                                   {getInitials(data)}
@@ -279,11 +278,6 @@ export default function HomePage() {
                                 <MessageCircle className=" size-5" />{" "}
                                 <span>{data.commentCount}</span>
                               </span>
-                            </div>
-                            <div>
-                              <button className=" cursor-pointer">
-                                <Bookmark className=" size-5" />
-                              </button>
                             </div>
                           </div>
                         </div>

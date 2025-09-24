@@ -128,6 +128,7 @@ export default async function Page({ params }: PageProps) {
             commentCount={postData.commentCount}
             shareTitle={postData.title}
             shareText={shareText}
+            postSlug={postData.slug}
           />
         </div>
         <br />
@@ -159,6 +160,7 @@ export default async function Page({ params }: PageProps) {
             commentCount={postData.commentCount}
             shareTitle={postData.title}
             shareText={shareText}
+            postSlug={postData.slug}
           />
         </div>
         <div className=" py-6" id="comment-section">

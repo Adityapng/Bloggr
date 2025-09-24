@@ -2,7 +2,7 @@ import TiptapRenderer from "@/components/blog/parseHtmlString";
 
 export type authorObject = {
   username: string;
-  authorAvatar: string;
+  avatarURL: string;
   firstName: string;
   lastName: string;
   _id: string;
@@ -32,6 +32,7 @@ export type Blog = {
   createdAt: string;
   readingTime: number;
   readCount: number;
+  status: string;
 };
 
 export const blogParsedContent = (data: string) => {
@@ -62,5 +63,7 @@ export const getInitials = (user: Blog): string => {
     ? user.author.firstName[0]
     : "";
   const lastNameInitial = user.author.lastName ? user.author.lastName[0] : "";
+  console.log(user.author.avatarURL);
+
   return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
 };

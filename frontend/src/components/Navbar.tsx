@@ -4,7 +4,6 @@ import Image from "next/image";
 import AuthButtons from "../components/Authbuttons";
 import LogoutButton from "../app/auth/LogoutButton";
 import Link from "next/link";
-import { Input } from "./ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "./ui/button";
 import {
@@ -117,10 +116,6 @@ const Navbar = () => {
             <Button variant="ghost" className=" md:block hidden" asChild>
               <Link href="/">Home</Link>
             </Button>
-            <Input
-              placeholder="Search"
-              className=" md:w-80 w-40 backdrop-blur-xs lg:block hidden"
-            />
           </div>
         </div>
         <div className=" flex md:gap-2 gap-1 items-center">

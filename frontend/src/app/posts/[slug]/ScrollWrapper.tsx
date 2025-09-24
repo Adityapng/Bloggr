@@ -6,6 +6,9 @@ import { CommentCount } from "@/components/interaction/Comment";
 import Like from "@/components/interaction/Like";
 import ShareButton from "@/components/interaction/Share";
 import Bookmark from "@/components/interaction/Bookmark";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Pencil } from "lucide-react";
 
 interface PostInteractionsClientProps {
   onScrollToComments: () => void;
@@ -14,12 +17,14 @@ interface PostInteractionsClientProps {
   likeCount: number;
   commentCount: number;
   postId: string;
+  postSlug: string;
   shareTitle: string;
   shareText: string;
 }
 
 interface ScrollWrapperProps {
   postId: string;
+  postSlug: string;
   initialUserHasLiked: boolean;
   initialUserHasBookmarked: boolean;
   likeCount: number;
@@ -35,6 +40,7 @@ function PostInteractionsClient({
   likeCount,
   commentCount,
   postId,
+  postSlug,
   shareTitle,
   shareText,
 }: PostInteractionsClientProps) {
@@ -56,6 +62,11 @@ function PostInteractionsClient({
           postId={postId}
           initialUserHasBookmarked={initialUserHasBookmarked}
         />
+        <Button variant="ghost" title="Edit Post" asChild>
+          <Link href={`/posts/${postSlug}/edit`}>
+            <Pencil />
+          </Link>
+        </Button>
       </div>
     </div>
   );

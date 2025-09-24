@@ -9,6 +9,7 @@ import {
   BookmarkPlus,
   Heart,
   MessageCircle,
+  Pencil,
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
@@ -280,6 +281,7 @@ export function UserPost({ userid }: UserPostFeedProps) {
               const isPostBeingDeleted = isDeleting === data._id;
               const isPostMovingToTrash = isMovingToTrash === data._id;
 
+              console.log(data.author);
               return (
                 <div
                   key={data._id}
@@ -295,7 +297,7 @@ export function UserPost({ userid }: UserPostFeedProps) {
                           <Avatar className=" size-7 ">
                             <AvatarImage
                               className=" select-none"
-                              src={data.author.authorAvatar}
+                              src={data.author.avatarURL}
                             />
                             <AvatarFallback className=" bg-amber-300 text-xs">
                               {getInitials(data)}
@@ -308,6 +310,16 @@ export function UserPost({ userid }: UserPostFeedProps) {
                       </Link>
                       {session.user?._id === userid && (
                         <div className=" flex gap-2 items-center">
+                          <Button
+                            variant="archive"
+                            size="icon"
+                            title="Edit Post"
+                            asChild
+                          >
+                            <Link href={`/posts/${data.slug}/edit`}>
+                              <Pencil />
+                            </Link>
+                          </Button>
                           <Button
                             variant="archive"
                             size="icon"
@@ -563,7 +575,7 @@ export function UserBookmarkedPost() {
                         <Avatar className=" size-7 ">
                           <AvatarImage
                             className=" select-none"
-                            src={data.author.authorAvatar}
+                            src={data.author.avatarURL}
                           />
                           <AvatarFallback className=" bg-amber-300 text-xs">
                             {getInitials(data)}
@@ -761,7 +773,7 @@ export function UserLikedPost() {
                         <Avatar className=" size-7 ">
                           <AvatarImage
                             className=" select-none"
-                            src={data.author.authorAvatar}
+                            src={data.author.avatarURL}
                           />
                           <AvatarFallback className=" bg-amber-300 text-xs">
                             {getInitials(data)}
@@ -1009,7 +1021,6 @@ export function UserDraftedPost() {
             posts.map((data) => {
               const isPostBeingDeleted = isDeleting === data._id;
               const isPostMovingToTrash = isMovingToTrash === data._id;
-
               return (
                 <div
                   key={data._id}
@@ -1022,7 +1033,7 @@ export function UserDraftedPost() {
                           <Avatar className=" size-7 ">
                             <AvatarImage
                               className=" select-none"
-                              src={data.author.authorAvatar}
+                              src={data.author.avatarURL}
                             />
                             <AvatarFallback className=" bg-amber-300 text-xs">
                               {getInitials(data)}
@@ -1361,7 +1372,7 @@ export function UserArchivedPost() {
                           <Avatar className=" size-7 ">
                             <AvatarImage
                               className=" select-none"
-                              src={data.author.authorAvatar}
+                              src={data.author.avatarURL}
                             />
                             <AvatarFallback className=" bg-amber-300 text-xs">
                               {getInitials(data)}

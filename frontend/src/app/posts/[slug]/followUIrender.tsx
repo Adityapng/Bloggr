@@ -106,7 +106,7 @@ export function RenderFollowUI({
           <Avatar className=" size-9 ">
             <AvatarImage
               className=" select-none"
-              src={postData.author.authorAvatar}
+              src={postData.author.avatarURL}
             />
             <AvatarFallback className=" bg-amber-300 text-xs">
               {getInitials(postData)}

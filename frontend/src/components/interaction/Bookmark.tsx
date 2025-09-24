@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { apiFetcher } from "@/lib/apiFetcher";
 import { Bookmark as BookmarkIcon } from "lucide-react";
+import { Button } from "../ui/button";
 // import { notFound } from "next/navigation";
 
 interface BookmarkProps {
@@ -53,7 +54,8 @@ export default function Bookmark({
   };
 
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={handleBookmarkClick}
       disabled={isPending}
       className="cursor-pointer"
@@ -62,12 +64,12 @@ export default function Bookmark({
       }
     >
       <BookmarkIcon
-        className={`h-6 w-6 transition-colors ${
+        className={`size-5 transition-colors ${
           userHasBookmarked
             ? "text-blue-500 fill-blue-500"
             : "text-white hover:text-blue-400"
         }`}
       />
-    </button>
+    </Button>
   );
 }

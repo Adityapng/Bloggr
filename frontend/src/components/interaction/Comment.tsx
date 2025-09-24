@@ -30,7 +30,7 @@ interface FetchedCommentAuthor {
   username: string;
   firstName: string;
   lastName: string;
-  avatarUrl: string;
+  avatarURL: string;
 }
 
 interface LikeProps {
@@ -126,9 +126,6 @@ export function CommentCount({ count }: CommentCountProps) {
     </div>
   );
 }
-
-// TODO continue with comment section
-// TODO automatically add comments like to the new comment
 const ExpandableTextarea: React.FC<ExpandableTextareaProps> = ({
   id = "expandable-textarea",
   placeholder = "Add a comment",
@@ -399,7 +396,7 @@ export function CommentSection({
                               <Avatar className="size-9">
                                 <AvatarImage
                                   className="select-none"
-                                  src={author.avatarUrl}
+                                  src={author.avatarURL}
                                 />
                                 <AvatarFallback className="bg-amber-300 text-xs">
                                   {getInitials(data)}
