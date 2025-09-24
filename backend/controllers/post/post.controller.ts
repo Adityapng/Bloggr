@@ -38,7 +38,7 @@ export const getAllPost = async (req: Request, res: Response) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(perPage)
-      .populate("author", "username firstName lastName avatarUrl")
+      .populate("author", "username firstName lastName avatarURL")
       .populate("tags", "name slug category");
 
     // console.log(posts);
@@ -114,7 +114,7 @@ export const getPostBySlug = async (req: Request, res: Response) => {
     const requesterId = req.sessionId || null;
 
     const requestedPost = await Post.findOne({ slug: slug })
-      .populate("author", "username avatarUrl firstName lastName _id")
+      .populate("author", "username avatarURL firstName lastName _id")
       .populate("tags", "name slug category");
 
     if (!requestedPost) {
@@ -182,6 +182,38 @@ export const createPost = async (req: Request, res: Response) => {
     await newPost.save();
 
     res.status(201).json(newPost);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+export const updatePost = async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.params;
+    const updates = req.body; // The body will contain the fields to update
+    const userId = req.user.userid;
+
+    // First, find the post to ensure it exists and the user is the author
+    const postToUpdate = await Post.findOne({ _id: postId, author: userId });
+    if (!postToUpdate) {
+      return res
+        .status(404)
+        .json({ error: "Post not found or you are not the author." });
+    }
+
+    // If tag names are being sent, convert them to IDs
+    if (updates.tags) {
+      const foundTags = await Tag.find({ name: { $in: updates.tags } });
+      updates.tags = foundTags.map((tag) => tag._id);
+    }
+
+    // Update the post with the new data
+    const updatedPost = await Post.findByIdAndUpdate(postId, updates, {
+      new: true, // Return the updated document
+      runValidators: true,
+    });
+
+    res.status(200).json(updatedPost);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }

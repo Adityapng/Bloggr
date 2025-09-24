@@ -111,7 +111,7 @@ const commentHandeller = async (req: Request, res: Response) => {
 
     const populatedComment = await Comment.findById(newComment._id).populate(
       "author",
-      "username firstName lastName avatarUrl"
+      "username firstName lastName avatarURL"
     );
 
     res.status(201).json(populatedComment);
@@ -130,7 +130,7 @@ const getComment = async (req: Request, res: Response) => {
     const comments = await Comment.find({ post: postid })
       .sort({ createdAt: -1 })
       .limit(Number(limit))
-      .populate("author", "username firstName lastName avatarUrl");
+      .populate("author", "username firstName lastName avatarURL");
 
     res.status(200).json(comments);
   } catch (error: any) {

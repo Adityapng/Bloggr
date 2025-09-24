@@ -3,6 +3,7 @@ import {
   getAllPost,
   getPostBySlug,
   createPost,
+  updatePost,
 } from "../controllers/post/post.controller";
 import {
   commentHandeller,
@@ -21,6 +22,7 @@ const postRoutes = Router();
 postRoutes.get("/", getAllPost);
 postRoutes.get("/:slug", getPostBySlug);
 postRoutes.post("/", authenticateUserToken, createPost);
+postRoutes.patch("/:postId", authenticateUserToken, updatePost);
 postRoutes.post("/:postid/like", authenticateUserToken, postLikeHandeller);
 postRoutes.post("/:postid/bookmark", authenticateUserToken, bookmarkHandeller);
 postRoutes.post("/:postid/comment", authenticateUserToken, commentHandeller);

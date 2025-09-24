@@ -15,7 +15,7 @@ const deleteUserAvatarFromDB = async (req: Request, res: Response) => {
       { $set: { profilePicturePublicID: "", avatarURL: "" } },
       { new: true }
     );
-    console.log(user, "this is teh userid from delete avatar");
+    // console.log(user, "this is teh userid from delete avatar");
 
     res
       .status(200)
@@ -79,8 +79,8 @@ const getUserProfile = async (req: Request, res: Response) => {
       { $set: { totalReads: TotalReads } },
       { new: true }
     )
-      .populate("followers", "username avatarUrl firstName lastName")
-      .populate("following", "username avatarUrl firstName lastName");
+      .populate("followers", "username avatarURL firstName lastName")
+      .populate("following", "username avatarURL firstName lastName");
 
     if (!userdata) {
       return res.status(404).json({ error: "User not found" });
@@ -99,7 +99,9 @@ const getUserPosts = async (req: Request, res: Response) => {
     const { userid } = req.params;
     const posts = await Post.find({ author: userid, status: "published" })
       .sort({ createdAt: -1 })
-      .populate("author", "username firstName lastName avatarUrl");
+      .populate("author", "username firstName lastName avatarURL");
+
+    console.log(posts);
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error getting user posts:", error);
@@ -113,7 +115,8 @@ const getUserBookmarkedPosts = async (req: Request, res: Response) => {
     const { userid } = req.user;
     const posts = await Post.find({ bookmarks: { $in: userid } })
       .sort({ createdAt: -1 })
-      .populate("author", "username firstName lastName avatarUrl");
+      .populate("author", "username firstName lastName avatarURL");
+
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error getting user posts:", error);
@@ -128,7 +131,7 @@ const getUserLikedPosts = async (req: Request, res: Response) => {
 
     const posts = await Post.find({ likes: { $in: userid } })
       .sort({ createdAt: -1 })
-      .populate("author", "username firstName lastName avatarUrl");
+      .populate("author", "username firstName lastName avatarURL");
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error getting user posts:", error);
@@ -143,7 +146,7 @@ const getUserDraftedPosts = async (req: Request, res: Response) => {
 
     const posts = await Post.find({ author: userid, status: "draft" })
       .sort({ createdAt: -1 })
-      .populate("author", "username firstName lastName avatarUrl");
+      .populate("author", "username firstName lastName avatarURL");
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error getting user posts:", error);
@@ -157,7 +160,7 @@ const getUserArchivedPosts = async (req: Request, res: Response) => {
 
     const posts = await Post.find({ author: userid, status: "archived" })
       .sort({ createdAt: -1 })
-      .populate("author", "username firstName lastName avatarUrl");
+      .populate("author", "username firstName lastName avatarURL");
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error getting user posts:", error);
@@ -307,8 +310,8 @@ const getCurrectAuthenticatedUserDetails = async (
       { $set: { totalReads: TotalReads } },
       { new: true }
     )
-      .populate("followers", "username avatarUrl firstName lastName")
-      .populate("following", "username avatarUrl firstName lastName");
+      .populate("followers", "username avatarURL firstName lastName")
+      .populate("following", "username avatarURL firstName lastName");
 
     if (!userdata) {
       return res.status(404).json({ error: "User not found" });
