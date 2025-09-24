@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { GoToCreatePost, GoToProfile, GoToSettings } from "./navButtons";
+import { GoToCreatePost, GoToProfile } from "./navButtons";
 import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
 // import { User } from "lucide-react";
 import { useSession } from "@/components/auth/SessionProvider";
@@ -60,9 +60,6 @@ const Navbar = () => {
           <DropdownMenuContent>
             <DropdownMenuItem>
               <GoToProfile />
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <GoToSettings />
             </DropdownMenuItem>
             <DropdownMenuItem>
               <LogoutButton />
