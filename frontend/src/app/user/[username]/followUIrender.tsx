@@ -79,6 +79,7 @@ export function FollowButton({
           ...
         </Button>
       ) : (
+      //add a pop up that asks visitor to login to follow
         <Button
           variant={follow ? "outline" : "default"}
           className="rounded-full "
